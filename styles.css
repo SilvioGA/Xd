@@ -48,7 +48,7 @@
   }
 
   main.site-wrap {
-    margin-top: 50px;
+    margin-top: 20px;
     display: flex;
     justify-content: center;
   }
@@ -56,11 +56,10 @@
   .main-content {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 40px;
     align-items: center;
     /* background-color: #fdfdfd0a;
     border: 2px solid rgba(255, 255, 255, 0.123); */
-    padding: 40px 0;
     border-radius: 25px;
     width: min(100%, 1000px);
   }
@@ -71,7 +70,7 @@
   }
 
   .main-content img {
-    width: min(80%, 650px);
+    width: min(90%, 650px);
   }
 
   .contribute {
@@ -83,7 +82,7 @@
   }
 
   .contribute .progess-bar {
-    width: 60%;
+    width: min(80%, 550px);
     background-color: gray;
     height: 20px;
     border-radius: 20px;
