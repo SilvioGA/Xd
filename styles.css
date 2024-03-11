@@ -58,11 +58,11 @@
     flex-direction: column;
     gap: 20px;
     align-items: center;
-    background-color: #fdfdfd0a;
-    border: 2px solid rgba(255, 255, 255, 0.123);
+    /* background-color: #fdfdfd0a;
+    border: 2px solid rgba(255, 255, 255, 0.123); */
     padding: 40px 0;
     border-radius: 25px;
-    width: min(80%, 1000px);
+    width: min(100%, 1000px);
   }
 
   .main-content h1 {
