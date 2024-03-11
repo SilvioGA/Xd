@@ -1,0 +1,131 @@
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: #141720;
+    color: #f1f1f1;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .site-wrap {
+    width: min(100%, 1000px);
+    margin: auto;
+  }
+
+  header {
+    width: 100%;
+    padding: 20px 0;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .header-wrap {
+    display: flex;
+    justify-content: flex-end;
+    width: min(90%, 1200px);
+    margin: auto;
+  }
+
+  button.connect {
+    padding: 13px 20px;
+    background-color: rgb(120, 39, 196);
+    color: #f1f1f1;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: opacity 0.5s;
+  }
+
+  button.connect:hover {
+    opacity: 0.7;
+  }
+
+  main.site-wrap {
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    background-color: #fdfdfd0a;
+    border: 2px solid rgba(255, 255, 255, 0.123);
+    padding: 40px 0;
+    border-radius: 25px;
+    width: min(80%, 1000px);
+  }
+
+  .main-content h1 {
+    font-size: clamp(20px, 25px, 2vw);
+    text-align: center;
+  }
+
+  .main-content img {
+    width: min(80%, 650px);
+  }
+
+  .contribute {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .contribute .progess-bar {
+    width: 60%;
+    background-color: gray;
+    height: 20px;
+    border-radius: 20px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .contribute .progess-bar::after {
+    content: '0%';
+  }
+
+  .contribute form {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 15px;
+    width: 200px;
+  }
+
+  .contribute form input {
+    text-align: center;
+    padding: 10px;
+    background-color: transparent;
+    color: #f1f1f1;
+    font-weight: bold;
+    outline: none;
+    border: 2px solid white;
+    border-radius: 8px;
+    width: 250px;
+  }
+
+  .contribute form button {
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  .contribute form button:disabled {
+    color: black;
+    opacity: 0.8;
+    font-weight: 500;
+    background-color: #f1f1f1;
+    width: 150px;
+  }
