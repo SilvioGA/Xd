@@ -49,7 +49,7 @@ Si el schematic no trae punto de aparición, apareces en el borde sur mirando al
 - `js/mesher.js`: geometría por chunks de 32³ con caras ocultas eliminadas; selección por DDA.
 - `js/main.js`: escena three.js e interfaz.
 - `js/player.js`: física del modo jugador (colisiones, escalones, escaleras de mano, agua, vuelo, correr).
-- `js/mousekart.js`, `js/unicorn.js`, `js/cemetery.js`, `js/castle.js`, `js/castle2.js`, `js/mansion.js`, `js/island.js`, `js/tree.js`, `js/rabbit.js`, `js/demo.js`, `js/lobby.js`, `js/japan.js` y `js/skywars.js`: ejemplos generados por código.
+- `js/tomjerry.js`, `js/mousekart.js`, `js/unicorn.js`, `js/cemetery.js`, `js/castle.js`, `js/castle2.js`, `js/mansion.js`, `js/island.js`, `js/tree.js`, `js/rabbit.js`, `js/demo.js`, `js/lobby.js`, `js/japan.js` y `js/skywars.js`: ejemplos generados por código.
 - `js/jp-kit.js`: piezas japonesas compartidas (isla, torii, tōrō, tejados curvos, pagoda, cerezos, bambú).
 - `js/schem-writer.js`: exportador a Sponge `.schem` v2, incluido el texto de los carteles.
 
@@ -139,6 +139,18 @@ node tools/generar-lobby.mjs isla isla-tropical.schem
 
 El mar llega hasta los bordes del schematic: pégalo en un océano (o en un mundo vacío) para que
 el agua no se derrame por los lados.
+
+## Homenaje a Tom y Jerry
+
+`js/tomjerry.js`: escena de fan en una esquina de la casa. Tom, el gato gris azulado (unos 27
+bloques), de pie con hocico y pecho blancos, orejas rosas, bigotes y cola; Jerry, marrón y a su
+lado, saluda delante de su ratonera en el rodapié, junto a un queso gigante con agujeros. Suelo de
+madera, alfombra, el cuenco de leche de Tom, una sartén, cuadros torcidos y el nombre escrito con
+bloques en la pared a rayas.
+
+```bash
+node tools/generar-lobby.mjs tomjerry tom-y-jerry.schem
+```
 
 ## Ratón en go-kart
 

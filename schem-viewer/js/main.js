@@ -16,6 +16,7 @@ import { buildCastle2 } from './castle2.js';
 import { buildCemetery } from './cemetery.js';
 import { buildUnicorn } from './unicorn.js';
 import { buildMouseKart } from './mousekart.js';
+import { buildTomJerry } from './tomjerry.js';
 import { PlayerPhysics, findSpawn } from './player.js';
 
 const $ = (id) => document.getElementById(id);
@@ -406,6 +407,7 @@ $('file-input').addEventListener('change', (e) => {
   e.target.value = '';
 });
 const EXAMPLES = {
+  tomjerry: () => load(buildTomJerry(), 'tom-y-jerry'),
   raton: () => load(buildMouseKart(), 'raton-go-kart'),
   castillo2: () => load(buildCastle2(), 'castillo-princesas-v2'),
   unicornio: () => load(buildUnicorn(), 'unicornio-rosa'),
@@ -726,5 +728,5 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => sche
 new MutationObserver(() => schem && buildHelpers()).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
 resize();
-EXAMPLES.raton();
+EXAMPLES.tomjerry();
 requestAnimationFrame(frame);

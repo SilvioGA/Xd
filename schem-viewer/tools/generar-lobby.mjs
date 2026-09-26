@@ -1,5 +1,5 @@
 // Genera los lobbies de ejemplo en .schem para WorldEdit.
-// Uso: node tools/generar-lobby.mjs [raton|castillo2|unicornio|cementerio|castillo|mansion|isla|arbol|conejo|skywars|japones|epico] [salida.schem]
+// Uso: node tools/generar-lobby.mjs [tomjerry|raton|castillo2|unicornio|cementerio|castillo|mansion|isla|arbol|conejo|skywars|japones|epico] [salida.schem]
 import { writeFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { buildLobby, LOBBY_SURFACE } from '../js/lobby.js';
@@ -14,6 +14,7 @@ import { buildCastle2, CASTLE2_GROUND } from '../js/castle2.js';
 import { buildCemetery, CEMETERY_GROUND } from '../js/cemetery.js';
 import { buildUnicorn } from '../js/unicorn.js';
 import { buildMouseKart } from '../js/mousekart.js';
+import { buildTomJerry } from '../js/tomjerry.js';
 import { toSpongeV2 } from '../js/schem-writer.js';
 
 const LOBBIES = {
@@ -23,6 +24,8 @@ const LOBBIES = {
   // El jugador aparece delante de la gran puerta, mirando a la avenida.
   // El jugador queda en el prado, delante del unicornio.
   // El jugador queda en el césped, delante del kart.
+  // El jugador queda al fondo de la sala, mirando a Tom, a Jerry y a la ratonera.
+  tomjerry: { build: buildTomJerry, origin: [24, 1, 38], name: 'Homenaje a Tom y Jerry', file: 'tom-y-jerry.schem' },
   raton: { build: buildMouseKart, origin: [27, 2, 34], name: 'Ratón en go-kart', file: 'raton-go-kart.schem' },
   unicornio: { build: buildUnicorn, origin: [31, 2, 32], name: 'Unicornio rosa', file: 'unicornio-rosa.schem' },
   cementerio: { build: buildCemetery, origin: [40, CEMETERY_GROUND + 1, 87], name: 'Cementerio épico', file: 'cementerio-epico.schem' },
