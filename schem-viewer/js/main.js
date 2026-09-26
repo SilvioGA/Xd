@@ -398,7 +398,7 @@ $('file-input').addEventListener('change', (e) => {
 });
 const EXAMPLES = {
   arbol: () => load(buildTree(), 'roble-gigante'),
-  conejo: () => load(buildRabbit(), 'conejo-gigante'),
+  conejo: () => load(buildRabbit(), 'conejos'),
   skywars: () => load(buildSkyWarsLobby(), 'lobby-skywars'),
   japones: () => load(buildJapaneseLobby(), 'lobby-japones'),
   lobby: () => load(buildLobby(), 'lobby-epico'),

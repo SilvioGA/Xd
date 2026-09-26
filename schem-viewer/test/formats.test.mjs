@@ -286,8 +286,8 @@ test('Colores de bloques con varios prefijos (chiseled_polished_blackstone)', as
   assert.deepEqual(a, b);
 });
 
-test('Conejo gigante: al menos 20 bloques de alto y simétrico', async () => {
-  const { buildRabbit, RABBIT_BASE } = await import('../js/rabbit.js');
+test('Conejos: el bueno mide al menos 20 bloques y es simétrico; el malvado está al lado', async () => {
+  const { buildRabbit, RABBIT_BASE, RABBIT_FRAME, EVIL_OFFSET } = await import('../js/rabbit.js');
   const s = buildRabbit();
   let top = 0;
   const statue = new Set(['minecraft:white_wool', 'minecraft:white_concrete', 'minecraft:pink_wool', 'minecraft:snow_block']);
@@ -295,10 +295,15 @@ test('Conejo gigante: al menos 20 bloques de alto y simétrico', async () => {
     if (statue.has(s.palette[s.get(x, y, z)].name)) top = Math.max(top, y);
   }
   assert.ok(top - RABBIT_BASE + 1 >= 20, `altura ${top - RABBIT_BASE + 1}`);
-  // Las orejas (parte alta) son simétricas respecto al centro.
-  for (let y = top - 6; y <= top; y++) for (let z = 0; z < s.length; z++) for (let x = 0; x < s.width; x++) {
-    assert.equal(s.get(x, y, z) !== 0, s.get(s.width - 1 - x, y, z) !== 0, `simetría en ${x},${y},${z}`);
+  // Las orejas del conejo bueno (cuadro x = 0..28) son simétricas respecto a su centro, x = 14.
+  for (let y = top - 6; y <= top; y++) for (let z = 0; z < s.length; z++) for (let x = 0; x < RABBIT_FRAME; x++) {
+    assert.equal(s.get(x, y, z) !== 0, s.get(RABBIT_FRAME - 1 - x, y, z) !== 0, `simetría en ${x},${y},${z}`);
   }
+  // El conejo malvado está al lado, con su propia peana, ojos rojos, colmillos y espada.
+  const names = new Set();
+  for (let y = 0; y < s.height; y++) for (let z = 0; z < s.length; z++) for (let x = EVIL_OFFSET; x < s.width; x++) names.add(s.palette[s.get(x, y, z)].name.slice(10));
+  for (const n of ['gray_wool', 'redstone_block', 'iron_block', 'gold_block', 'magma_block', 'soul_fire', 'wither_skeleton_skull']) assert.ok(names.has(n), n);
+  assert.ok(!names.has('grass_block'), 'la peana del malvado no es de césped');
 });
 
 test('Roble gigante: al menos 40 de alto, hojas persistentes y ramas unidas al tronco', async () => {
