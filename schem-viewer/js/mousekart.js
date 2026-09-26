@@ -49,10 +49,9 @@ function mouseKartAt(p) {
   if (mkChain(p, MK_SCARF, 0.95) && Math.abs(y - (12.8 + Math.sin(x) * 0.4)) < 0.9) return 'yellow_wool';
   // Guantes en el volante, brazos, piernas y pies.
   for (const sd of [-1, 1]) {
-    if (mkEll(p, [2.4, 9.8, sd * 1.9], [1.1, 1.1, 1.1]) <= 1) return 'white_wool';
-    if (mkSeg(p, [-3.6, 11.3, sd * 2.9], [1.8, 9.6, sd * 1.9]).d <= 1.05) return 'light_gray_wool';
-    if (mkEll(p, [5, 5.1, sd * 1.6], [1.2, 0.9, 1]) <= 1) return 'pink_concrete';
-    if (mkSeg(p, [-3, 6, sd * 1.6], [4.2, 5.1, sd * 1.6]).d <= 1.15) return 'light_gray_wool';
+    if (mkEll(p, [1.6, 9.9, sd * 1.35], [0.95, 0.95, 0.95]) <= 1) return 'white_wool';
+    if (mkSeg(p, [-3.6, 11.3, sd * 2.9], [0.9, 9.9, sd * 1.5]).d <= 1.05) return 'light_gray_wool';
+    if (mkSeg(p, [-3, 6, sd * 1.6], [3, 5.4, sd * 1.6]).d <= 1.15) return 'light_gray_wool';
   }
   // Cuerpo con la barriga blanca.
   if (mkEll(p, [-4.4, 8.6, 0], [3, 3.9, 3.2]) <= 1) return x > -2.6 && Math.abs(z) < 2 ? 'white_wool' : 'light_gray_wool';
@@ -60,13 +59,21 @@ function mouseKartAt(p) {
   if (mkChain(p, MK_TAIL, 0.62)) return 'pink_wool';
 
   // ---- Kart ----
-  // Volante (aro, radios y columna).
-  const wd = Math.hypot(y - 9, z);
-  if (x >= 1.4 && x <= 2.6 && wd <= 2.3) {
-    if (wd > 1.3) return 'black_concrete';
-    if (Math.abs(z) < 0.5 || Math.abs(y - 9) < 0.5) return 'gray_concrete';
+  // Volante: aro fino y redondo con buje, sobre una columna que sale del salpicadero.
+  const wd = Math.hypot(y - 8.7, z);
+  if (x >= 1 && x < 2 && wd <= 2 && wd > 1.05) return 'black_concrete';
+  if (x >= 1 && x < 2.2 && wd <= 0.6) return 'gray_concrete';
+  if (mkSeg(p, [3.2, 6.6, 0], [1.8, 8.5, 0]).d <= 0.5) return 'gray_concrete';
+  // Carrocería delantera: sube desde el morro hasta el salpicadero y tapa las piernas, con una
+  // franja blanca por el centro y un salpicadero negro.
+  if (x >= 2 && x <= 13.5 && y >= 1.8) {
+    const top = 6.6 - (x - 2) * 0.3;
+    const half = 3.6 - (x - 2) * 0.12;
+    if (y <= top && Math.abs(z) <= half) {
+      if (x < 3 && y > top - 1.2) return 'black_concrete';
+      return Math.abs(z) < 0.8 && y > top - 1 ? 'white_concrete' : 'red_concrete';
+    }
   }
-  if (mkSeg(p, [6.5, 4, 0], [2.2, 8.7, 0]).d <= 0.55) return 'black_concrete';
   // Ruedas: neumático negro, llanta gris y buje.
   for (const wh of MK_WHEELS) {
     const d = Math.hypot(x - wh.c[0], y - wh.c[1]);
@@ -94,8 +101,9 @@ function mouseKartAt(p) {
   }
   // Chasis, morro y alerón delantero, parachoques trasero.
   if (mkBox(p, -12.5, 13, 1.8, 3.6, -6.5, 6.5)) return 'red_concrete';
-  if (x > 13 && x <= 18 && y >= 1.8 && y <= 3.6 - (x - 13) * 0.28 && Math.abs(z) <= 4.6 - (x - 13) * 0.55) return 'red_concrete';
-  if (mkBox(p, 17, 19.2, 1.1, 2.1, -7.6, 7.6)) return Math.abs(z) > 6.4 ? 'red_concrete' : 'white_concrete';
+  if (x > 13 && x <= 17.5 && y >= 1.6 && y <= 3.3 - (x - 13) * 0.25 && Math.abs(z) <= 2.3 - (x - 13) * 0.2) return Math.abs(z) < 0.8 && y > 2.4 ? 'white_concrete' : 'red_concrete';
+  if (mkBox(p, 15.5, 18.6, 1.2, 2.2, -7.4, 7.4)) return 'white_concrete';
+  for (const sd of [-1, 1]) if (mkBox(p, 15.2, 18.6, 1.2, 3.6, sd > 0 ? 6.6 : -7.6, sd > 0 ? 7.6 : -6.6)) return 'red_concrete';
   if (mkBox(p, -13.6, -12.4, 1.5, 3.1, -7, 7)) return 'black_concrete';
   return null;
 }
