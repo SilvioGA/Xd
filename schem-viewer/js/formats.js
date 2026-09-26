@@ -3,7 +3,7 @@
 
 import { inflate, readNbt, LongArray } from './nbt.js';
 import { Schematic, stateKey } from './schematic.js';
-import { legacyState } from './legacy.js';
+import { legacyState, DYES } from './legacy.js';
 
 export async function parseSchematicFile(buffer) {
   const raw = await inflate(new Uint8Array(buffer));
@@ -172,10 +172,25 @@ function parseLegacy(root) {
   const add = root.AddBlocks;
   const cache = new Map();
   const blocks = schem.blocks;
+  const W = schem.width;
+  const Lz = schem.length;
+  // Color de los estandartes: en el formato antiguo va en el bloque con datos ("Base" es el
+  // valor del tinte: 0 = negro ... 15 = blanco).
+  const bannerColor = new Map();
+  for (const te of root.TileEntities || []) {
+    if (!/banner/i.test(te.id || '') || te.Base === undefined) continue;
+    bannerColor.set((te.y * Lz + te.z) * W + te.x, DYES[15 - (te.Base & 15)]);
+  }
   for (let i = 0; i < blocks.length; i++) {
     let id = ids[i];
-    if (add) id |= i & 1 ? (add[i >> 1] & 0x0f) << 8 : (add[i >> 1] & 0xf0) << 4;
+    // AddBlocks: medio byte por bloque; los índices pares usan la mitad baja (como WorldEdit).
+    if (add && i >> 1 < add.length) id |= i & 1 ? (add[i >> 1] & 0xf0) << 4 : (add[i >> 1] & 0x0f) << 8;
     if (id === 0) continue;
+    if ((id === 176 || id === 177) && bannerColor.has(i)) {
+      const [name, props] = legacyState(id, data[i] & 15);
+      blocks[i] = schem.state(stateKey(name.replace('white_', `${bannerColor.get(i)}_`), props));
+      continue;
+    }
     const key = (id << 4) | (data[i] & 15);
     let s = cache.get(key);
     if (s === undefined) {

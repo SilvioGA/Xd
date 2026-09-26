@@ -478,3 +478,16 @@ test('Modo jugador: cae al suelo, sube losas, choca con paredes y trepa escalera
   assert.equal(sp[1], 1);
   assert.equal(sp[2], 11.5);
 });
+
+test('Formato clásico: estandartes con orientación y color, y AddBlocks como WorldEdit', async () => {
+  // 2×1×1: un estandarte de pared amarillo mirando al este y un bloque con id 256+1 (AddBlocks).
+  const buf = writeNbt(c({
+    Width: tag('short', 2), Height: tag('short', 1), Length: tag('short', 1), Materials: tag('string', 'Alpha'),
+    Blocks: tag('byteArray', [177, 1]), Data: tag('byteArray', [5, 0]),
+    AddBlocks: tag('byteArray', [0x10]), // par: mitad baja (0) → sigue siendo 177; impar: mitad alta (1) → 257
+    TileEntities: tag('list', [c({ id: tag('string', 'Banner'), x: tag('int', 0), y: tag('int', 0), z: tag('int', 0), Base: tag('int', 11), Patterns: tag('list', [], 'compound') })], 'compound'),
+  }));
+  const s = await parseSchematicFile(buf);
+  assert.equal(s.palette[s.get(0, 0, 0)].key, 'minecraft:yellow_wall_banner[facing=east]');
+  assert.equal(s.palette[s.get(1, 0, 0)].name, 'minecraft:stone');
+});

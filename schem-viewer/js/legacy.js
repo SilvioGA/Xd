@@ -1,7 +1,7 @@
 // Tabla de IDs numéricos (formato .schematic de MCEdit, versiones <= 1.12)
 // a nombres modernos. Aproximada: cubre los bloques y variantes más usados.
 
-const DYES = ['white', 'orange', 'magenta', 'light_blue', 'yellow', 'lime', 'pink', 'gray',
+export const DYES = ['white', 'orange', 'magenta', 'light_blue', 'yellow', 'lime', 'pink', 'gray',
   'light_gray', 'cyan', 'purple', 'blue', 'brown', 'green', 'red', 'black'];
 const WOODS = ['oak', 'spruce', 'birch', 'jungle', 'acacia', 'dark_oak'];
 
@@ -104,6 +104,9 @@ export function legacyState(id, data) {
     }];
     case 107: case 183: case 184: case 185: case 186: case 187:
       return [NAMES[id], { facing: ['south', 'west', 'north', 'east'][data & 3], open: data & 4 ? 'true' : 'false' }];
+    // Estandartes: el color va en el bloque con datos (se aplica al leer el archivo).
+    case 176: return ['white_banner', { rotation: String(data) }];
+    case 177: return ['white_wall_banner', { facing: { 2: 'north', 3: 'south', 4: 'west', 5: 'east' }[data] || 'north' }];
     case 8: case 9: return ['water', {}];
     case 10: case 11: return ['lava', {}];
     default:
