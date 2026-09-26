@@ -193,3 +193,17 @@ test('El mesher genera geometría para el ejemplo y el pick encuentra bloques', 
   const hit0 = m.pick([1.5, 100, 10.5], [0, -1, 0]);
   assert.equal(s.palette[hit0.id].name, 'minecraft:stone');
 });
+
+test('blockInfo nunca falla y da colores válidos, incluso con bloques desconocidos', async () => {
+  const { blockInfo } = await import('../js/blocks.js');
+  const names = ['iron_trapdoor', 'iron_door', 'lime_concrete_powder', 'red_glazed_terracotta', 'blue_shulker_box',
+    'stripped_oak_log', 'oak_log', 'bloque_inventado', 'mimod:cosa_rara', 'grass_block', 'white_stained_glass_pane',
+    'cobblestone_wall', 'tube_coral_block', 'dead_brain_coral', 'waxed_oxidized_cut_copper_stairs', 'deepslate_diamond_ore'];
+  for (const n of names) {
+    const info = blockInfo({ name: n.includes(':') ? n : `minecraft:${n}`, props: {} });
+    for (const k of ['side', 'top', 'bottom']) {
+      assert.equal(info[k].length, 3, `${n}.${k}`);
+      assert.ok(info[k].every((v) => Number.isFinite(v) && v >= 0 && v <= 1), `${n}.${k} = ${info[k]}`);
+    }
+  }
+});

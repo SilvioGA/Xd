@@ -157,10 +157,29 @@ function buildHelpers() {
   helpers.visible = showGrid;
 }
 
+// Caja mínima que contiene bloques visibles (muchos schematics tienen mucho aire alrededor).
+function occupiedBounds() {
+  const { width: W, height: H, length: L, blocks } = schem;
+  const air = mesher.infos.map((i) => i.air);
+  let x0 = W, y0 = H, z0 = L, x1 = -1, y1 = -1, z1 = -1;
+  let i = 0;
+  for (let y = 0; y < H; y++) for (let z = 0; z < L; z++) for (let x = 0; x < W; x++, i++) {
+    if (air[blocks[i]]) continue;
+    if (x < x0) x0 = x; if (x > x1) x1 = x;
+    if (y < y0) y0 = y; if (y > y1) y1 = y;
+    if (z < z0) z0 = z; if (z > z1) z1 = z;
+  }
+  if (x1 < 0) return { min: [0, 0, 0], max: [W, H, L] };
+  return { min: [x0, y0, z0], max: [x1 + 1, y1 + 1, z1 + 1] };
+}
+
+let bounds = null;
+
 function fitCamera() {
-  const { width: W, height: H, length: L } = schem;
-  const center = new THREE.Vector3(W / 2, H / 2, L / 2);
-  const radius = 0.5 * Math.hypot(W, H, L);
+  const { min, max } = bounds;
+  const size = [max[0] - min[0], max[1] - min[1], max[2] - min[2]];
+  const center = new THREE.Vector3((min[0] + max[0]) / 2, (min[1] + max[1]) / 2, (min[2] + max[2]) / 2);
+  const radius = 0.5 * Math.hypot(...size);
   const dist = (radius / Math.sin(THREE.MathUtils.degToRad(camera.fov / 2))) * 0.95;
   const dir = new THREE.Vector3(1, 0.85, 1.3).normalize();
   camera.position.copy(center).addScaledVector(dir, dist);
@@ -249,16 +268,18 @@ function renderMaterials() {
     sw.style.background = toCss(m.color);
     const name = document.createElement('span');
     name.className = 'name';
-    name.textContent = m.label;
-    const count = document.createElement('span');
-    count.className = 'count';
-    count.textContent = fmt(m.count);
+    const label = document.createElement('span');
+    label.textContent = m.label;
+    name.append(label);
     const st = stacks(m.count);
     if (st) {
       const small = document.createElement('small');
       small.textContent = st;
-      count.append(small);
+      name.append(small);
     }
+    const count = document.createElement('span');
+    count.className = 'count';
+    count.textContent = fmt(m.count);
     li.append(box, sw, name, count);
     const toggle = () => setHidden(m, !(mesher.hidden[m.ids[0]] === 1));
     li.addEventListener('click', (e) => {
@@ -325,6 +346,7 @@ function load(s, fileName) {
   mesher = new Mesher(s);
   hiddenVersion = 0;
   computeMaterials();
+  bounds = occupiedBounds();
   renderFacts(fileName);
   $('mat-search').value = '';
   renderMaterials();

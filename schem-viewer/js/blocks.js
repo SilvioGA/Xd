@@ -104,7 +104,7 @@ function hashColor(name) {
   return [f(0), f(8), f(4)];
 }
 
-const SUFFIXES = ['_stairs', '_slab', '_wall', '_fence_gate', '_fence', '_pressure_plate', '_button', '_pane'];
+const SUFFIXES = ['_stairs', '_slab', '_wall', '_fence_gate', '_fence', '_pressure_plate', '_button', '_pane', '_trapdoor', '_door', '_bars'];
 const PREFIXES = ['waxed_', 'infested_', 'polished_', 'chiseled_', 'cracked_', 'cut_', 'smooth_', 'mossy_', 'deepslate_', 'potted_'];
 
 function lookup(n) {
@@ -119,7 +119,8 @@ function lookup(n) {
 function resolveColor(fullName) {
   const n = fullName.slice(fullName.indexOf(':') + 1);
   const wrap = (v) => {
-    if (Array.isArray(v)) return { side: hex(v[0]), top: hex(v[1]), bottom: hex(v[2]) };
+    // v puede ser '#hex', ['#lado', '#arriba', '#abajo'] o un color RGB ya calculado [r, g, b].
+    if (Array.isArray(v) && typeof v[0] === 'string') return { side: hex(v[0]), top: hex(v[1]), bottom: hex(v[2]) };
     const c = typeof v === 'string' ? hex(v) : v;
     return { side: c, top: c, bottom: c };
   };
@@ -313,8 +314,19 @@ function shapeFor(n, props) {
   return null;
 }
 
-// Info de renderizado por entrada de paleta.
+// Info de renderizado por entrada de paleta. Un bloque desconocido o raro
+// nunca debe impedir abrir el archivo: si algo falla se dibuja como cubo gris.
 export function blockInfo(entry) {
+  try {
+    return computeInfo(entry);
+  } catch (err) {
+    console.warn('Bloque no reconocido:', entry.key || entry.name, err);
+    const c = [0.55, 0.55, 0.55];
+    return { air: false, name: entry.name, alpha: 1, transparent: false, side: c, top: c, bottom: c, cube: true, opaque: true };
+  }
+}
+
+function computeInfo(entry) {
   const full = entry.name;
   const n = full.slice(full.indexOf(':') + 1);
   const props = entry.props || {};
