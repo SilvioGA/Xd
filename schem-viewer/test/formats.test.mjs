@@ -300,3 +300,32 @@ test('Conejo gigante: al menos 20 bloques de alto y simétrico', async () => {
     assert.equal(s.get(x, y, z) !== 0, s.get(s.width - 1 - x, y, z) !== 0, `simetría en ${x},${y},${z}`);
   }
 });
+
+test('Roble gigante: al menos 40 de alto, hojas persistentes y ramas unidas al tronco', async () => {
+  const { buildTree, TREE_GROUND } = await import('../js/tree.js');
+  const s = buildTree();
+  const nm = (x, y, z) => s.palette[s.get(x, y, z)].name;
+  let top = 0;
+  let wood = 0;
+  for (let y = 0; y < s.height; y++) for (let z = 0; z < s.length; z++) for (let x = 0; x < s.width; x++) {
+    const n = nm(x, y, z);
+    if (/leaves|_wood$/.test(n)) top = y;
+    if (/_wood$/.test(n) && y > TREE_GROUND) wood++;
+  }
+  assert.ok(top - TREE_GROUND >= 40, `altura ${top - TREE_GROUND}`);
+  const counts = s.countBlocks();
+  for (const e of s.palette.filter((_, i) => counts[i] > 0)) if (e.name.endsWith('_leaves')) assert.equal(e.props.persistent, 'true');
+  // Casi toda la madera sobre el suelo está unida al tronco (se admiten puntas sueltas dentro de la copa).
+  const seen = new Set();
+  const q = [[28, TREE_GROUND + 1, 28]];
+  let connected = 0;
+  while (q.length) {
+    const [x, y, z] = q.pop();
+    const k = `${x},${y},${z}`;
+    if (seen.has(k) || !/_wood$|moss_block|bee_nest/.test(nm(x, y, z))) continue;
+    seen.add(k);
+    if (/_wood$/.test(nm(x, y, z)) && y > TREE_GROUND) connected++;
+    for (const [a, b, c] of [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]]) q.push([x + a, y + b, z + c]);
+  }
+  assert.ok(connected / wood > 0.99, `${connected} de ${wood}`);
+});

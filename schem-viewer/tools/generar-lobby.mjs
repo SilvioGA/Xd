@@ -1,15 +1,17 @@
 // Genera los lobbies de ejemplo en .schem para WorldEdit.
-// Uso: node tools/generar-lobby.mjs [skywars|japones|epico|conejo] [salida.schem]
+// Uso: node tools/generar-lobby.mjs [arbol|conejo|skywars|japones|epico] [salida.schem]
 import { writeFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { buildLobby, LOBBY_SURFACE } from '../js/lobby.js';
 import { buildJapaneseLobby, JAPAN_SPAWN } from '../js/japan.js';
 import { buildSkyWarsLobby, SKYWARS_SPAWN } from '../js/skywars.js';
 import { buildRabbit, RABBIT_BASE } from '../js/rabbit.js';
+import { buildTree, TREE_GROUND } from '../js/tree.js';
 import { toSpongeV2 } from '../js/schem-writer.js';
 
 const LOBBIES = {
   // origin: celda donde queda el jugador al hacer //paste.
+  arbol: { build: buildTree, origin: [28, TREE_GROUND + 1, 54], name: 'Roble gigante', file: 'roble-gigante.schem' },
   conejo: { build: buildRabbit, origin: [14, RABBIT_BASE, 26], name: 'Conejo gigante', file: 'conejo-gigante.schem' },
   skywars: { build: buildSkyWarsLobby, origin: SKYWARS_SPAWN, name: 'Lobby SkyWars', file: 'lobby-skywars.schem' },
   japones: { build: buildJapaneseLobby, origin: JAPAN_SPAWN, name: 'Lobby japonés', file: 'lobby-japones.schem' },

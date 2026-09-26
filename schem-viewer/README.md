@@ -91,3 +91,15 @@ las patas, sobre una peana de césped con flores. Se modela con elipsoides conve
 ```bash
 node tools/generar-lobby.mjs conejo conejo-gigante.schem
 ```
+
+## Roble gigante
+
+`js/tree.js`: roble de 45 bloques de alto. Tronco con la base ensanchada y vetas de corteza
+oscura, nueve raíces que se hunden en el suelo, ramas generadas de forma recursiva con copas
+de hojas de roble, roble oscuro y azalea, lianas de bayas brillantes, musgo en la cara norte,
+hongos de repisa, una colmena, farolillos y un columpio. Alrededor: podzol, helechos, setas,
+flores, rocas con musgo y un tronco caído.
+
+```bash
+node tools/generar-lobby.mjs arbol roble-gigante.schem
+```
