@@ -286,8 +286,8 @@ test('Colores de bloques con varios prefijos (chiseled_polished_blackstone)', as
   assert.deepEqual(a, b);
 });
 
-test('Conejos: el bueno mide al menos 20 bloques y es simétrico; el malvado está al lado', async () => {
-  const { buildRabbit, RABBIT_BASE, RABBIT_FRAME, EVIL_OFFSET } = await import('../js/rabbit.js');
+test('Conejos: el bueno mide al menos 20 bloques y es simétrico; el malvado y el del amor están al lado', async () => {
+  const { buildRabbit, RABBIT_BASE, RABBIT_FRAME, EVIL_OFFSET, LOVE_OFFSET } = await import('../js/rabbit.js');
   const s = buildRabbit();
   let top = 0;
   const statue = new Set(['minecraft:white_wool', 'minecraft:white_concrete', 'minecraft:pink_wool', 'minecraft:snow_block']);
@@ -301,9 +301,17 @@ test('Conejos: el bueno mide al menos 20 bloques y es simétrico; el malvado est
   }
   // El conejo malvado está al lado, con su propia peana, ojos rojos, colmillos y espada.
   const names = new Set();
-  for (let y = 0; y < s.height; y++) for (let z = 0; z < s.length; z++) for (let x = EVIL_OFFSET; x < s.width; x++) names.add(s.palette[s.get(x, y, z)].name.slice(10));
+  for (let y = 0; y < s.height; y++) for (let z = 0; z < s.length; z++) for (let x = EVIL_OFFSET; x < EVIL_OFFSET + RABBIT_FRAME; x++) names.add(s.palette[s.get(x, y, z)].name.slice(10));
   for (const n of ['gray_wool', 'redstone_block', 'iron_block', 'gold_block', 'magma_block', 'soul_fire', 'wither_skeleton_skull']) assert.ok(names.has(n), n);
   assert.ok(!names.has('grass_block'), 'la peana del malvado no es de césped');
+  // El conejo del amor, con su peana: pelaje rosa, ojos de corazón y un gran corazón.
+  const love = new Map();
+  for (let y = 0; y < s.height; y++) for (let z = 0; z < s.length; z++) for (let x = LOVE_OFFSET; x < s.width; x++) {
+    const n = s.palette[s.get(x, y, z)].name.slice(10);
+    love.set(n, (love.get(n) || 0) + 1);
+  }
+  for (const n of ['pink_wool', 'red_concrete', 'pink_petals', 'pink_terracotta']) assert.ok(love.has(n), n);
+  assert.ok(love.get('red_concrete') > 60, 'corazón grande, ojos y mosaico');
 });
 
 test('Roble gigante: al menos 40 de alto, hojas persistentes y ramas unidas al tronco', async () => {

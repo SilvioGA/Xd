@@ -12,8 +12,8 @@ import { toSpongeV2 } from '../js/schem-writer.js';
 const LOBBIES = {
   // origin: celda donde queda el jugador al hacer //paste.
   arbol: { build: buildTree, origin: [28, TREE_GROUND + 1, 54], name: 'Roble gigante', file: 'roble-gigante.schem' },
-  // El jugador queda delante de los dos conejos, en el medio.
-  conejo: { build: buildRabbit, origin: [31, RABBIT_BASE - 1, 34], name: 'Conejo bueno y conejo malvado', file: 'conejos.schem' },
+  // El jugador queda delante de los tres conejos, frente al del medio.
+  conejo: { build: buildRabbit, origin: [47, RABBIT_BASE - 1, 36], name: 'Conejos: bueno, malvado y del amor', file: 'conejos.schem' },
   skywars: { build: buildSkyWarsLobby, origin: SKYWARS_SPAWN, name: 'Lobby SkyWars', file: 'lobby-skywars.schem' },
   japones: { build: buildJapaneseLobby, origin: JAPAN_SPAWN, name: 'Lobby japonés', file: 'lobby-japones.schem' },
   epico: { build: buildLobby, origin: [25, LOBBY_SURFACE + 1, 33], name: 'Lobby épico', file: 'lobby-epico.schem' },

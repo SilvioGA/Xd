@@ -82,14 +82,17 @@ node tools/generar-lobby.mjs skywars lobby-skywars.schem
 Los carteles ya llevan texto (`[SkyWars]`, mapa, modo). Regístralos en tu plugin para que
 muestren el estado de cada partida.
 
-## Conejo bueno y conejo malvado
+## Conejos: bueno, malvado y del amor
 
 `js/rabbit.js`: dos estatuas de 28 bloques de alto, una al lado de la otra, cada una con su
 peana. El conejo bueno es blanco, con el interior de las orejas rosa, nariz en triángulo y una
 zanahoria sobre las patas, sobre césped con flores. El malvado tiene el pelaje oscuro con
 manchas, una oreja rota, ojos rojos con cejas de enfado, colmillos, una cicatriz y una espada
 clavada en el suelo; su peana es de netherrack con grietas de magma, fuego de almas, huesos,
-rosas de wither, calaveras y pinchos.
+rosas de wither, calaveras y pinchos. El conejo del amor es rosa, con ojos de corazón,
+mofletes sonrojados y un gran corazón rojo abrazado contra el pecho; tiene corazones flotando
+junto a las orejas y una peana de flores (pétalos rosas, rosales, peonías) con un corazón en
+mosaico en el suelo.
 
 ```bash
 node tools/generar-lobby.mjs conejo conejos.schem
