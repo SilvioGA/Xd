@@ -9,6 +9,7 @@ import { buildJapaneseLobby } from './japan.js';
 import { buildSkyWarsLobby } from './skywars.js';
 import { buildRabbit } from './rabbit.js';
 import { buildTree } from './tree.js';
+import { buildIsland } from './island.js';
 
 const $ = (id) => document.getElementById(id);
 const stage = $('stage');
@@ -397,6 +398,7 @@ $('file-input').addEventListener('change', (e) => {
   e.target.value = '';
 });
 const EXAMPLES = {
+  isla: () => load(buildIsland(), 'isla-tropical'),
   arbol: () => load(buildTree(), 'roble-gigante'),
   conejo: () => load(buildRabbit(), 'conejos'),
   skywars: () => load(buildSkyWarsLobby(), 'lobby-skywars'),
@@ -512,5 +514,5 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => sche
 new MutationObserver(() => schem && buildHelpers()).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
 resize();
-EXAMPLES.arbol();
+EXAMPLES.isla();
 requestAnimationFrame(frame);

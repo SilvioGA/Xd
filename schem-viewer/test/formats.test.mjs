@@ -342,3 +342,19 @@ test('Roble gigante: al menos 40 de alto, hojas persistentes y ramas unidas al t
   }
   assert.ok(connected / wood > 0.99, `${connected} de ${wood}`);
 });
+
+test('Isla tropical: mar, playa, arrecife, palmeras con cocos y muelle', async () => {
+  const { buildIsland, ISLAND_SEA } = await import('../js/island.js');
+  const s = buildIsland();
+  const counts = s.countBlocks();
+  const total = (re) => s.palette.reduce((n, e, i) => n + (re.test(e.name) ? counts[i] : 0), 0);
+  assert.ok(total(/:water$/) > 5000, 'hay mar');
+  assert.ok(total(/:sand$/) > 800, 'hay playa');
+  assert.ok(total(/coral_block$/) > 100, 'hay arrecife');
+  assert.ok(total(/jungle_log$/) > 60 && total(/:cocoa$/) > 10, 'palmeras con cocos');
+  assert.ok(total(/hay_block$/) > 30, 'cabaña con tejado de paja');
+  // Las esquinas son mar abierto y la superficie del agua está a la altura del mar.
+  assert.equal(s.palette[s.get(0, ISLAND_SEA, 0)].name, 'minecraft:water');
+  assert.equal(s.get(0, ISLAND_SEA + 1, 0), 0);
+  for (const e of s.palette.filter((_, i) => counts[i] > 0)) if (e.name.endsWith('_leaves')) assert.equal(e.props.persistent, 'true');
+});

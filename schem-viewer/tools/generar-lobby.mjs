@@ -1,5 +1,5 @@
 // Genera los lobbies de ejemplo en .schem para WorldEdit.
-// Uso: node tools/generar-lobby.mjs [arbol|conejo|skywars|japones|epico] [salida.schem]
+// Uso: node tools/generar-lobby.mjs [isla|arbol|conejo|skywars|japones|epico] [salida.schem]
 import { writeFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { buildLobby, LOBBY_SURFACE } from '../js/lobby.js';
@@ -7,10 +7,12 @@ import { buildJapaneseLobby, JAPAN_SPAWN } from '../js/japan.js';
 import { buildSkyWarsLobby, SKYWARS_SPAWN } from '../js/skywars.js';
 import { buildRabbit, RABBIT_BASE } from '../js/rabbit.js';
 import { buildTree, TREE_GROUND } from '../js/tree.js';
+import { buildIsland, ISLAND_SEA } from '../js/island.js';
 import { toSpongeV2 } from '../js/schem-writer.js';
 
 const LOBBIES = {
   // origin: celda donde queda el jugador al hacer //paste.
+  isla: { build: buildIsland, origin: [38, ISLAND_SEA + 2, 66], name: 'Isla tropical', file: 'isla-tropical.schem' },
   arbol: { build: buildTree, origin: [28, TREE_GROUND + 1, 54], name: 'Roble gigante', file: 'roble-gigante.schem' },
   // El jugador queda delante de los tres conejos, frente al del medio.
   conejo: { build: buildRabbit, origin: [47, RABBIT_BASE - 1, 36], name: 'Conejos: bueno, malvado y del amor', file: 'conejos.schem' },

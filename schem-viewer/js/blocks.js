@@ -85,6 +85,7 @@ const C = {
   weeping_vines: '#8A1A1A', twisting_vines: '#1A8A7A', crimson_roots: '#8A1A2A', warped_roots: '#1A8A7A', nether_sprouts: '#1A9A8A',
   crimson_fungus: '#9A2A1A', warped_fungus: '#2A8A7A', pink_petals: '#F0A0C0', frogspawn: '#6A5A5A',
   ochre_froglight: '#F5E7A8', verdant_froglight: '#D3F0C6', pearlescent_froglight: '#F0DDE5', resin_block: '#D96A1A', resin_bricks: '#C7541A',
+  cocoa: '#8A5A2A', bamboo_block: '#6E8A2B', stripped_bamboo_block: '#C9B25A', bamboo_mosaic: '#C1AD50',
   creaking_heart: '#5A4E4A', pale_moss_block: '#6B706A', pale_moss_carpet: '#6B706A', pale_hanging_moss: '#7A7F78',
 };
 
@@ -311,6 +312,7 @@ function shapeFor(n, props) {
     return [box(7, 0, 7, 9, 16, 9)];
   }
   if (n === 'bell') return [box(4, 4, 4, 12, 13, 12)];
+  if (n === 'cocoa') return [rotate(box(5, 3, 1, 11, 10, 7), facing || 'north')];
   if (n === 'sea_pickle' || n === 'turtle_egg' || n.endsWith('candle') || n === 'conduit') return [box(5, 0, 5, 11, 6, 11)];
   if (n === 'anvil' || n.endsWith('_anvil')) return [box(2, 0, 2, 14, 4, 14), box(6, 4, 4, 10, 10, 12), box(3, 10, 0, 13, 16, 16)];
   if (n === 'hopper') return [box(0, 10, 0, 16, 16, 16), box(4, 4, 4, 12, 10, 12), box(6, 0, 6, 10, 4, 10)];

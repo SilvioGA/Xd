@@ -109,3 +109,18 @@ flores, rocas con musgo y un tronco caído.
 ```bash
 node tools/generar-lobby.mjs arbol roble-gigante.schem
 ```
+
+## Isla tropical
+
+`js/island.js`: isla de 72×72 en mar abierto. Fondo de arena que se hunde hacia fuera, arrecife
+de coral de cinco colores con abanicos y pepinos de mar, kelp y praderas de algas. En tierra:
+playa, colina con una cascada que cae a una poza, palmeras curvadas con cocos, cabaña tiki de
+bambú con tejado de paja y antorchas, muelle con farolillos, hamaca entre dos palmeras,
+sombrilla y toalla, castillo de arena, huevos de tortuga, fogata y un tesoro medio enterrado.
+
+```bash
+node tools/generar-lobby.mjs isla isla-tropical.schem
+```
+
+El mar llega hasta los bordes del schematic: pégalo en un océano (o en un mundo vacío) para que
+el agua no se derrame por los lados.
