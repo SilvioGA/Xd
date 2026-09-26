@@ -270,7 +270,16 @@ function shapeFor(n, props) {
       const i = DIRS.indexOf(f);
       f = DIRS[(i + (props.hinge === 'right' ? 3 : 1)) % 4];
     }
-    return [rotate(box(0, 0, 13, 16, 16, 16), f)];
+    // Hoja de puerta con detalle: arriba un marco con dos ventanas; abajo, tablero y pomo.
+    const parts = props.half === 'upper'
+      ? [box(0, 0, 13, 3, 16, 16), box(13, 0, 13, 16, 16, 16), box(3, 0, 13, 13, 3, 16), box(3, 13, 13, 13, 16, 16), box(7, 3, 13, 9, 13, 16)]
+      : [box(0, 0, 13, 16, 16, 16)];
+    const out = parts.map((b) => rotate(b, f));
+    if (props.half !== 'upper') {
+      const kx = props.hinge === 'right' ? [1.5, 3.5] : [12.5, 14.5];
+      out.push([...rotate(box(kx[0], 13, 11.5, kx[1], 15, 13), f), 'knob']);
+    }
+    return out;
   }
   if (n.endsWith('_fence_gate')) {
     const g = box(0, 5, 7, 16, 16, 9);
@@ -346,12 +355,17 @@ function computeInfo(entry) {
 
   const shape = shapeFor(n, props);
   const info = { air: false, name: full, alpha, transparent: alpha < 1, ...colors };
+  if (n.endsWith('_door')) {
+    // Las puertas son algo más oscuras que las tablas de su madera.
+    for (const k of ['side', 'top', 'bottom']) info[k] = tint(info[k], -0.2);
+  }
 
   if (shape === null) {
     info.cube = true;
     info.opaque = alpha >= 1;
   } else if (Array.isArray(shape)) {
-    info.boxes = shape;
+    // Una caja puede llevar un color propio al final (p. ej. el pomo metálico de las puertas).
+    info.boxes = shape.map((b) => (b[6] === 'knob' ? [...b.slice(0, 6), [0.78, 0.7, 0.42]] : b));
   } else if (shape.connect) {
     info.connect = shape.connect;
     const has = DIRS.some((d) => props[d] !== undefined);

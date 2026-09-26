@@ -167,8 +167,13 @@ export class PlayerPhysics {
     this.vel[2] += (dz - this.vel[2]) * blend;
 
     if (this.flying) {
+      // Vuelo libre: atraviesa bloques, como el modo espectador.
       this.vel[1] = (input.jump ? FLY * 0.7 : 0) - (input.sprint ? FLY * 0.7 : 0);
-    } else if (climbing) {
+      for (let a = 0; a < 3; a++) this.pos[a] += this.vel[a] * dt;
+      this.onGround = false;
+      return;
+    }
+    if (climbing) {
       this.vel[1] = input.jump || input.forward ? 3.2 : Math.max(this.vel[1] - GRAVITY * dt, -2.5);
     } else if (this.inFluid) {
       this.vel[1] = input.jump ? 3.5 : Math.max(this.vel[1] - GRAVITY * 0.25 * dt, -2.5);
@@ -186,6 +191,14 @@ export class PlayerPhysics {
 
     // Si caes al vacío, vuelves al punto de aparición.
     if (this.pos[1] < -24) this.reset(this.spawn);
+  }
+
+  // Activa o desactiva el vuelo. Al dejar de volar dentro de un bloque, sube hasta un hueco libre.
+  setFlying(on) {
+    this.flying = on;
+    this.vel[1] = 0;
+    if (on) return;
+    for (let i = 0; i < 400 && this.blockedAt(this.pos); i++) this.pos[1] += 0.25;
   }
 
   eye() {

@@ -463,6 +463,16 @@ test('Modo jugador: cae al suelo, sube losas, choca con paredes y trepa escalera
   const climbed = run(q, { forward: true }, 2);
   assert.ok(climbed >= 3.9, `trepa por la escalera hasta arriba de la pared (máx y=${climbed})`);
 
+  // Volando atraviesa la pared; al dejar de volar dentro de ella, sube hasta un hueco libre.
+  const fl = new PlayerPhysics(new Mesher(s));
+  fl.reset([5.5, 1, 4.5, 0]);
+  fl.setFlying(true);
+  run(fl, { forward: true }, 0.6);
+  assert.ok(fl.pos[2] < 2.5, `volando cruza la pared (z=${fl.pos[2]})`);
+  fl.pos = [5.5, 1.5, 2.5];
+  fl.setFlying(false);
+  assert.ok(fl.pos[1] >= 4 && !fl.blockedAt(fl.pos), `sale del bloque (y=${fl.pos[1]})`);
+
   // Punto de aparición automático: de pie en el borde sur, mirando al norte.
   const sp = findSpawn(s, p);
   assert.equal(sp[1], 1);

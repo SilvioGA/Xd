@@ -215,7 +215,7 @@ export class Mesher {
               const axis = F.n[0] ? 0 : F.n[1] ? 1 : 2;
               const onEdge = F.n[axis] > 0 ? bx[axis + 3] >= 1 : bx[axis] <= 0;
               if (onEdge && this.opaqueAt(x + F.n[0], y + F.n[1], z + F.n[2])) continue;
-              const base = f === 2 ? info.top : f === 3 ? info.bottom : info.side;
+              const base = bx[6] || (f === 2 ? info.top : f === 3 ? info.bottom : info.side);
               const k = F.shade * nz;
               for (let v = 0; v < 4; v++) {
                 const c = F.c[v];

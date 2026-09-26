@@ -511,12 +511,24 @@ const KEYS = {
   KeyD: 'right', ArrowRight: 'right', Space: 'jump', ShiftLeft: 'sprint', ShiftRight: 'sprint',
 };
 
+// Captura el ratón para mirar. Se pide el movimiento en bruto (sin aceleración) si el
+// navegador lo permite; si no se puede capturar, se mira arrastrando.
 function requestLock() {
+  const el = renderer.domElement;
+  if (!el.requestPointerLock) { player.noLock = true; return; }
+  const plain = () => {
+    try {
+      const r = el.requestPointerLock();
+      if (r && r.catch) r.catch(() => { player.noLock = true; });
+    } catch {
+      player.noLock = true;
+    }
+  };
   try {
-    const r = renderer.domElement.requestPointerLock?.();
-    if (r && r.catch) r.catch(() => {});
+    const r = el.requestPointerLock({ unadjustedMovement: true });
+    if (r && r.catch) r.catch(plain);
   } catch {
-    // Sin bloqueo del ratón: se mira arrastrando.
+    plain();
   }
 }
 
@@ -585,15 +597,24 @@ $('btn-player').addEventListener('click', () => (player.active ? exitPlayer() : 
 $('btn-exit-player').addEventListener('click', exitPlayer);
 document.addEventListener('pointerlockchange', () => {
   player.locked = document.pointerLockElement === renderer.domElement;
+  player.skipMoves = 2; // los primeros movimientos tras capturar el ratón traen saltos falsos
+  player.drag = null;
   $('player-lock-hint').hidden = player.locked || !player.active;
 });
+document.addEventListener('pointerlockerror', () => { player.noLock = true; });
 document.addEventListener('mousemove', (e) => {
-  if (player.active && player.locked) look(e.movementX || 0, e.movementY || 0);
+  if (!player.active || !player.locked) return;
+  if (player.skipMoves > 0) { player.skipMoves--; return; }
+  const dx = e.movementX || 0;
+  const dy = e.movementY || 0;
+  // Algunos navegadores mandan de vez en cuando un salto enorme: se ignora.
+  if (Math.abs(dx) > 250 || Math.abs(dy) > 250) return;
+  look(dx, dy);
 });
-// Sin bloqueo del ratón (o en pantallas táctiles) se mira arrastrando sobre la vista.
+// Con el dedo (o si no se puede capturar el ratón) se mira arrastrando sobre la vista.
 renderer.domElement.addEventListener('pointerdown', (e) => {
   if (!player.active) return;
-  if (e.pointerType === 'mouse' && !player.locked) requestLock();
+  if (e.pointerType === 'mouse' && !player.locked && !player.noLock) { requestLock(); return; }
   if (!player.locked) player.drag = { id: e.pointerId, x: e.clientX, y: e.clientY };
 });
 renderer.domElement.addEventListener('pointermove', (e) => {
@@ -606,10 +627,7 @@ window.addEventListener('pointerup', () => { player.drag = null; });
 window.addEventListener('keydown', (e) => {
   if (!player.active) return;
   if (KEYS[e.code]) { player.input[KEYS[e.code]] = true; e.preventDefault(); }
-  if (e.code === 'KeyF' && !e.repeat) {
-    player.physics.flying = !player.physics.flying;
-    player.physics.vel[1] = 0;
-  }
+  if (e.code === 'KeyF' && !e.repeat) player.physics.setFlying(!player.physics.flying);
   if (e.code === 'Escape' && !player.locked) exitPlayer();
 });
 window.addEventListener('keyup', (e) => {
@@ -621,7 +639,7 @@ for (const b of document.querySelectorAll('#touch-pad [data-key]')) {
   const key = b.dataset.key;
   const on = (e) => {
     e.preventDefault();
-    if (key === 'fly') { player.physics.flying = !player.physics.flying; player.physics.vel[1] = 0; return; }
+    if (key === 'fly') { player.physics.setFlying(!player.physics.flying); return; }
     player.input[key] = true;
   };
   const off = () => { if (key !== 'fly') player.input[key] = false; };
