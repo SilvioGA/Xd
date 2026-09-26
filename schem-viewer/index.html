@@ -24,9 +24,14 @@
       <span class="logo" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
       Visor de Schematics
     </div>
-    <span class="file-chip" id="file-chip">casita-ejemplo</span>
+    <span class="file-chip" id="file-chip">lobby-epico</span>
     <div class="bar-actions">
-      <button class="btn" id="btn-demo" type="button">Ejemplo</button>
+      <label class="sr-only" for="demo-select">Ejemplos</label>
+      <select class="btn" id="demo-select">
+        <option value="" disabled>Ejemplos</option>
+        <option value="lobby" selected>Lobby épico</option>
+        <option value="casita">Casita</option>
+      </select>
       <button class="btn primary" id="btn-open" type="button">Abrir archivo</button>
       <input id="file-input" type="file" accept=".schem,.schematic,.litematic,.nbt" hidden>
     </div>

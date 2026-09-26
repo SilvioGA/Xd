@@ -207,3 +207,21 @@ test('blockInfo nunca falla y da colores válidos, incluso con bloques desconoci
     }
   }
 });
+
+test('El lobby se exporta a .schem v2 y se vuelve a leer igual', async () => {
+  const { buildLobby } = await import('../js/lobby.js');
+  const { toSpongeV2 } = await import('../js/schem-writer.js');
+  const s = buildLobby();
+  assert.equal(s.width, 50); assert.equal(s.length, 50);
+  // Hojas persistentes (si no, se caen en el juego) y vallas/muros con conexiones calculadas.
+  const counts = s.countBlocks();
+  for (const e of s.palette.filter((_, i) => counts[i] > 0)) {
+    if (e.name.endsWith('_leaves')) assert.equal(e.props.persistent, 'true', e.key);
+    if (/_(fence|wall|pane)$/.test(e.name)) assert.ok(e.props.north !== undefined, e.key);
+  }
+  const back = await parseSchematicFile(gzipSync(toSpongeV2(s, { origin: [25, 21, 33] })));
+  assert.equal(back.format, 'Sponge .schem v2');
+  for (let i = 0; i < s.blocks.length; i += 97) {
+    assert.equal(back.palette[back.blocks[i]].key, s.palette[s.blocks[i]].key);
+  }
+});

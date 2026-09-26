@@ -4,6 +4,7 @@ import { parseSchematicFile, mcVersion } from './formats.js';
 import { Mesher, CHUNK } from './mesher.js';
 import { prettyName } from './blocks.js';
 import { buildDemo } from './demo.js';
+import { buildLobby } from './lobby.js';
 
 const $ = (id) => document.getElementById(id);
 const stage = $('stage');
@@ -391,7 +392,11 @@ $('file-input').addEventListener('change', (e) => {
   openFile(e.target.files[0]);
   e.target.value = '';
 });
-$('btn-demo').addEventListener('click', () => load(buildDemo(), 'casita-ejemplo'));
+const EXAMPLES = {
+  lobby: () => load(buildLobby(), 'lobby-epico'),
+  casita: () => load(buildDemo(), 'casita-ejemplo'),
+};
+$('demo-select').addEventListener('change', (e) => EXAMPLES[e.target.value]?.());
 
 let dragDepth = 0;
 window.addEventListener('dragenter', (e) => {
@@ -499,5 +504,5 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => sche
 new MutationObserver(() => schem && buildHelpers()).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
 resize();
-load(buildDemo(), 'casita-ejemplo');
+EXAMPLES.lobby();
 requestAnimationFrame(frame);

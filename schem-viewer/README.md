@@ -34,4 +34,18 @@ npm test           # pruebas de los parsers y el mesher (Node 18+)
 - `js/blocks.js`: colores y formas de los bloques.
 - `js/mesher.js`: geometría por chunks de 32³ con caras ocultas eliminadas; selección por DDA.
 - `js/main.js`: escena three.js e interfaz.
-- `js/demo.js`: casita de ejemplo que se carga al abrir.
+- `js/demo.js` y `js/lobby.js`: ejemplos generados por código (casita y lobby épico).
+- `js/schem-writer.js`: exportador a Sponge `.schem` v2.
+
+## Lobby épico 50×50
+
+`js/lobby.js` genera un lobby flotante: fuente central con aguja de amatista y anillos,
+cuatro portales de colores para modos de juego, jardines de cerezos y cuatro islotes.
+
+```bash
+node tools/generar-lobby.mjs lobby-epico.schem
+```
+
+Para pegarlo con WorldEdit (1.20+): copia el archivo a `plugins/WorldEdit/schematics/`,
+colócate donde quieras la plaza y ejecuta `//schem load lobby-epico` y `//paste`.
+Quedarás de pie en la plaza, al sur de la fuente. La isla se extiende 21 bloques hacia abajo.
