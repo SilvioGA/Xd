@@ -9,7 +9,7 @@ const GRAVITY = 28;
 const JUMP = 8.6;
 const STEP = 0.6;
 const HALF = 0.3;
-const HEIGHT = 1.8;
+const BODY_HEIGHT = 1.8;
 export const EYE = 1.62;
 
 const PASSABLE = /(_door|_fence_gate|_carpet|_pressure_plate|_button|_sign|_banner|torch|^rail|_rail|redstone_wire|^lever$|^fire$|soul_fire|lily_pad|sugar_cane|bamboo$|^chain$|iron_chain|end_rod|lightning_rod|tripwire|sea_pickle|turtle_egg|kelp|seagrass|coral$|coral_fan$|pointed_dripstone|amethyst_cluster|_bud$|^cocoa$|^bell$|cobweb|lantern|flower_pot|^potted_|_head$|_skull$|^light$|structure_void|^barrier$)/;
@@ -78,7 +78,7 @@ export class PlayerPhysics {
 
   touches(test) {
     const [px, py, pz] = this.pos;
-    for (let y = Math.floor(py); y <= Math.floor(py + HEIGHT - 0.01); y++) {
+    for (let y = Math.floor(py); y <= Math.floor(py + BODY_HEIGHT - 0.01); y++) {
       for (let z = Math.floor(pz - HALF); z <= Math.floor(pz + HALF); z++) {
         for (let x = Math.floor(px - HALF); x <= Math.floor(px + HALF); x++) {
           const k = this.kindAt(x, y, z);
@@ -90,7 +90,7 @@ export class PlayerPhysics {
   }
 
   aabb(p = this.pos) {
-    return [p[0] - HALF, p[1], p[2] - HALF, p[0] + HALF, p[1] + HEIGHT, p[2] + HALF];
+    return [p[0] - HALF, p[1], p[2] - HALF, p[0] + HALF, p[1] + BODY_HEIGHT, p[2] + HALF];
   }
 
   // Mueve la caja a lo largo de un eje y la detiene contra las cajas sólidas.

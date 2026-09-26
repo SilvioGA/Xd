@@ -633,7 +633,8 @@ for (const b of document.querySelectorAll('#touch-pad [data-key]')) {
 
 function updatePlayer(dt) {
   const p = player.physics;
-  p.step(dt, player.input);
+  // Pasos pequeños: la velocidad no depende de los fotogramas por segundo.
+  for (let t = Math.min(dt, 0.25); t > 1e-4; t -= 0.05) p.step(Math.min(t, 0.05), player.input);
   const [ex, ey, ez] = p.eye();
   camera.position.set(ex, ey, ez);
   camera.rotation.set(p.pitch, p.yaw, 0, 'YXZ');
