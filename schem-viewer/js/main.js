@@ -7,6 +7,7 @@ import { buildDemo } from './demo.js';
 import { buildLobby } from './lobby.js';
 import { buildJapaneseLobby } from './japan.js';
 import { buildSkyWarsLobby } from './skywars.js';
+import { buildRabbit } from './rabbit.js';
 
 const $ = (id) => document.getElementById(id);
 const stage = $('stage');
@@ -395,6 +396,7 @@ $('file-input').addEventListener('change', (e) => {
   e.target.value = '';
 });
 const EXAMPLES = {
+  conejo: () => load(buildRabbit(), 'conejo-gigante'),
   skywars: () => load(buildSkyWarsLobby(), 'lobby-skywars'),
   japones: () => load(buildJapaneseLobby(), 'lobby-japones'),
   lobby: () => load(buildLobby(), 'lobby-epico'),
@@ -508,5 +510,5 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => sche
 new MutationObserver(() => schem && buildHelpers()).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
 resize();
-EXAMPLES.skywars();
+EXAMPLES.conejo();
 requestAnimationFrame(frame);

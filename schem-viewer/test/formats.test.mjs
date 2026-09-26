@@ -285,3 +285,18 @@ test('Colores de bloques con varios prefijos (chiseled_polished_blackstone)', as
   const b = blockInfo({ name: 'minecraft:blackstone', props: {} }).side;
   assert.deepEqual(a, b);
 });
+
+test('Conejo gigante: al menos 20 bloques de alto y simétrico', async () => {
+  const { buildRabbit, RABBIT_BASE } = await import('../js/rabbit.js');
+  const s = buildRabbit();
+  let top = 0;
+  const statue = new Set(['minecraft:white_wool', 'minecraft:white_concrete', 'minecraft:pink_wool', 'minecraft:snow_block']);
+  for (let y = 0; y < s.height; y++) for (let z = 0; z < s.length; z++) for (let x = 0; x < s.width; x++) {
+    if (statue.has(s.palette[s.get(x, y, z)].name)) top = Math.max(top, y);
+  }
+  assert.ok(top - RABBIT_BASE + 1 >= 20, `altura ${top - RABBIT_BASE + 1}`);
+  // Las orejas (parte alta) son simétricas respecto al centro.
+  for (let y = top - 6; y <= top; y++) for (let z = 0; z < s.length; z++) for (let x = 0; x < s.width; x++) {
+    assert.equal(s.get(x, y, z) !== 0, s.get(s.width - 1 - x, y, z) !== 0, `simetría en ${x},${y},${z}`);
+  }
+});

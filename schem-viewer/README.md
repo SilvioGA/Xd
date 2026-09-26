@@ -81,3 +81,13 @@ node tools/generar-lobby.mjs skywars lobby-skywars.schem
 
 Los carteles ya llevan texto (`[SkyWars]`, mapa, modo). Regístralos en tu plugin para que
 muestren el estado de cada partida.
+
+## Conejo gigante
+
+`js/rabbit.js`: estatua de un conejo blanco sentado de 28 bloques de alto (orejas incluidas),
+con el interior de las orejas rosa, ojos con brillo, nariz, mofletes y una zanahoria entre
+las patas, sobre una peana de césped con flores. Se modela con elipsoides convertidos a bloques.
+
+```bash
+node tools/generar-lobby.mjs conejo conejo-gigante.schem
+```
