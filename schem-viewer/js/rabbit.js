@@ -115,19 +115,27 @@ export function buildRabbit() {
     const z = front(x, y);
     if (z >= 0) set(x, y, z, m);
   };
+  // La columna central de la cara es x = 14 (el ancho es impar): lo simétrico de x es 28 - x.
+  const MX = Math.floor(CX);
   const eyeY = B + 16;
-  for (const [x0, hl] of [[11, 11], [17, 18]]) {
-    for (let dx = 0; dx < 2; dx++) for (let dy = 0; dy < 2; dy++) {
-      const x = x0 + dx;
-      const y = eyeY + dy;
-      paint(x, y, x === hl && dy === 1 ? 'white_concrete' : 'black_concrete');
+  for (const side of [-1, 1]) {
+    for (const dx of [2, 3]) for (const dy of [0, 1]) {
+      const x = MX + side * dx;
+      paint(x, eyeY + dy, dx === 3 && dy === 1 ? 'white_concrete' : 'black_concrete'); // brillo arriba, hacia fuera
     }
   }
-  paint(14, B + 14, 'pink_concrete');
-  paint(15, B + 14, 'pink_concrete');
-  paint(14, B + 13, 'light_gray_concrete');
-  paint(15, B + 13, 'light_gray_concrete');
-  for (const x of [10, 19]) paint(x, B + 13, 'pink_terracotta');
+  // Hocico: dos almohadillas blancas redondeadas bajo la nariz.
+  for (let y = B + 12; y <= B + 15; y++) for (let z = 18; z <= 23; z++) for (let x = MX - 3; x <= MX + 3; x++) {
+    const p = [x + 0.5 - CX, y + 0.5 - B, z + 0.5 - CZ];
+    const pad = [-0.9, 0.9].some((ox) => ell(p, [ox, 13.9, 7.4], [1.5, 1.2, 1.2]) <= 1);
+    if (pad && s.get(x, y, z) === 0) set(x, y, z, 'white_concrete');
+  }
+  // Nariz rosa en triángulo invertido (3 bloques arriba y 1 abajo), que sobresale del hocico.
+  const nose = [[MX - 1, B + 15], [MX, B + 15], [MX + 1, B + 15], [MX, B + 14]];
+  const noseZ = Math.max(...nose.map(([x, y]) => front(x, y))) + 1;
+  for (const [x, y] of nose) for (let z = front(x, y) + 1; z <= noseZ; z++) set(x, y, z, 'pink_wool');
+  // Mofletes sonrosados a los lados del hocico.
+  for (const side of [-1, 1]) paint(MX + side * 4, B + 14, 'pink_wool');
 
   // ---------- Detalles del césped ----------
   const flowers = ['dandelion', 'poppy', 'azure_bluet', 'oxeye_daisy', 'cornflower', 'pink_tulip'];
