@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Visor de Schematics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Silkscreen&display=swap">
+<link rel="stylesheet" href="./style.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<div class="app">
+  <header class="bar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+      Visor de Schematics
+    </div>
+    <span class="file-chip" id="file-chip">casita-ejemplo</span>
+    <div class="bar-actions">
+      <button class="btn" id="btn-demo" type="button">Ejemplo</button>
+      <button class="btn primary" id="btn-open" type="button">Abrir archivo</button>
+      <input id="file-input" type="file" accept=".schem,.schematic,.litematic,.nbt" hidden>
+    </div>
+  </header>
+
+  <div class="main">
+    <section class="stage" id="stage" aria-label="Vista 3D">
+      <div class="progress" id="progress" hidden>
+        <span id="progress-label">Generando geometría…</span>
+        <div class="track"><div class="fill" id="progress-fill"></div></div>
+      </div>
+      <div class="toast" id="toast" role="alert" hidden></div>
+      <div class="tooltip" id="tooltip" hidden></div>
+      <div class="drop" id="drop" hidden>Suelta el archivo aquí<br>.schem · .litematic · .nbt · .schematic</div>
+      <p class="hint">Arrastra para girar · clic derecho para mover · rueda para zoom</p>
+      <div class="view-tools">
+        <button class="btn small" id="btn-grid" type="button" aria-pressed="true">Rejilla</button>
+        <button class="btn small" id="btn-reset" type="button">Centrar vista</button>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <div class="section">
+        <h2>Archivo</h2>
+        <dl class="facts" id="facts"></dl>
+      </div>
+
+      <div class="section">
+        <h2>Capas <span id="layer-title"></span></h2>
+        <div class="layer-row">
+          <button class="btn small" id="layer-down" type="button" aria-label="Bajar una capa">−</button>
+          <input type="range" id="layer" min="0" max="0" value="0" aria-label="Altura máxima visible">
+          <button class="btn small" id="layer-up" type="button" aria-label="Subir una capa">+</button>
+          <span class="layer-value" id="layer-value">Y 0</span>
+        </div>
+        <label class="check"><input type="checkbox" id="single-layer"> Mostrar solo esta capa</label>
+        <p class="muted-note">Atajos: <kbd>[</kbd> <kbd>]</kbd> cambian de capa, <kbd>R</kbd> centra la vista.</p>
+      </div>
+
+      <div class="section">
+        <h2>Materiales <span id="mat-total"></span></h2>
+        <input class="search" id="mat-search" type="search" placeholder="Buscar bloque…" aria-label="Buscar bloque">
+        <div class="mat-actions">
+          <button class="btn small" id="mat-all" type="button">Mostrar todos</button>
+          <button class="btn small" id="mat-copy" type="button">Copiar lista</button>
+        </div>
+        <ul class="materials" id="materials"></ul>
+      </div>
+    </aside>
+  </div>
+</div>
+<script type="module" src="./js/main.js"></script>
+</body>
+</html>
