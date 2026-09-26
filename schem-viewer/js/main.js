@@ -12,6 +12,7 @@ import { buildTree } from './tree.js';
 import { buildIsland } from './island.js';
 import { buildMansion } from './mansion.js';
 import { buildCastle } from './castle.js';
+import { buildCastle2 } from './castle2.js';
 import { buildCemetery } from './cemetery.js';
 import { buildUnicorn } from './unicorn.js';
 import { PlayerPhysics, findSpawn } from './player.js';
@@ -404,6 +405,7 @@ $('file-input').addEventListener('change', (e) => {
   e.target.value = '';
 });
 const EXAMPLES = {
+  castillo2: () => load(buildCastle2(), 'castillo-princesas-v2'),
   unicornio: () => load(buildUnicorn(), 'unicornio-rosa'),
   cementerio: () => load(buildCemetery(), 'cementerio-epico'),
   castillo: () => load(buildCastle(), 'castillo-princesas'),
@@ -722,5 +724,5 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => sche
 new MutationObserver(() => schem && buildHelpers()).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
 resize();
-EXAMPLES.unicornio();
+EXAMPLES.castillo2();
 requestAnimationFrame(frame);

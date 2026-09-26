@@ -569,3 +569,40 @@ test('Castillo de princesas: entrada libre, torres con remate, trono, cama y esc
   for (let t = 0; t < 12; t += 1 / 60) { q.step(1 / 60, { forward: true }); top = Math.max(top, q.pos[1]); }
   assert.ok(top >= G + 35, `sube hasta y=${top.toFixed(1)}`);
 });
+
+test('Castillo v2: todas las escaleras de caracol se suben andando', async () => {
+  const { buildCastle2, CASTLE2_GROUND: G } = await import('../js/castle2.js');
+  const { PlayerPhysics } = await import('../js/player.js');
+  const s = buildCastle2();
+  const m = new Mesher(s);
+  // Camina en círculo (sentido de subida) alrededor del caracol y devuelve la altura máxima.
+  const climb = (cx, cz, rr, startDeg, y, seconds) => {
+    const a = (startDeg * Math.PI) / 180;
+    const p = new PlayerPhysics(m);
+    p.reset([cx + Math.cos(a) * rr, y, cz + Math.sin(a) * rr, 0]);
+    assert.ok(!p.blockedAt(p.pos), `empieza libre junto a ${cx},${cz}`);
+    let top = y;
+    for (let t = 0; t < seconds; t += 1 / 60) {
+      const ang = Math.atan2(p.pos[2] - cz, p.pos[0] - cx);
+      const r = Math.hypot(p.pos[0] - cx, p.pos[2] - cz);
+      const dx = -Math.sin(ang) + (rr - r) * 0.8 * Math.cos(ang);
+      const dz = Math.cos(ang) + (rr - r) * 0.8 * Math.sin(ang);
+      p.yaw = Math.atan2(-dx, -dz);
+      p.step(1 / 60, { forward: true });
+      top = Math.max(top, p.pos[1]);
+    }
+    return top;
+  };
+  for (const [cx, cz] of [[17.5, 15.5], [77.5, 15.5], [17.5, 76.5], [77.5, 76.5]]) {
+    const door = (Math.atan2(46 - cz, 47.5 - cx) * 180) / Math.PI;
+    assert.ok(climb(cx, cz, 2.6, door - 5, G + 1, 20) >= G + 11, `torre de la muralla ${cx},${cz} hasta el adarve`);
+  }
+  for (const cx of [40.5, 54.5]) assert.ok(climb(cx, 77.5, 2.1, -100, G + 1, 20) >= G + 11, `torre de la puerta ${cx} hasta el adarve`);
+  assert.ok(climb(30.5, 44.5, 2.4, -342, G + 3, 30) >= G + 19, 'torre SO del palacio hasta el mirador');
+  assert.ok(climb(64.5, 44.5, 2.4, -432, G + 3, 30) >= G + 19, 'torre SE del palacio hasta la sala de música');
+  assert.ok(climb(47.5, 30.5, 3.1, 65, G + 12, 40) >= G + 35, 'torre principal hasta la habitación');
+  // Escaleras de mano de las torres traseras y de las torrecillas.
+  const nm = (x, y, z) => s.palette[s.get(x, y, z)].name.slice(10);
+  for (const x of [30, 64]) for (let y = G + 12; y <= G + 19; y++) assert.equal(nm(x, y, 17), 'ladder');
+  for (const x of [36, 58]) for (let y = G + 12; y <= G + 32; y++) assert.equal(nm(x, y, 30), 'ladder');
+});

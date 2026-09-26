@@ -134,7 +134,9 @@ export class PlayerPhysics {
     const moved = this.moveAxis(axis, delta);
     if (Math.abs(moved - delta) < 1e-6 || (!this.onGround && !this.flying)) return;
     const saved = this.pos.slice();
-    for (let up = 0.125; up <= STEP + 1e-6; up += 0.125) {
+    // Prueba de octavo en octavo y, al final, la altura máxima (una alfombra sobre un escalón
+    // de media losa pide 0,5625).
+    for (const up of [0.125, 0.25, 0.375, 0.5, STEP]) {
       const p = saved.slice();
       p[1] += up;
       if (this.blockedAt(p)) continue;

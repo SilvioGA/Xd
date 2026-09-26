@@ -49,7 +49,7 @@ Si el schematic no trae punto de aparición, apareces en el borde sur mirando al
 - `js/mesher.js`: geometría por chunks de 32³ con caras ocultas eliminadas; selección por DDA.
 - `js/main.js`: escena three.js e interfaz.
 - `js/player.js`: física del modo jugador (colisiones, escalones, escaleras de mano, agua, vuelo, correr).
-- `js/unicorn.js`, `js/cemetery.js`, `js/castle.js`, `js/mansion.js`, `js/island.js`, `js/tree.js`, `js/rabbit.js`, `js/demo.js`, `js/lobby.js`, `js/japan.js` y `js/skywars.js`: ejemplos generados por código.
+- `js/unicorn.js`, `js/cemetery.js`, `js/castle.js`, `js/castle2.js`, `js/mansion.js`, `js/island.js`, `js/tree.js`, `js/rabbit.js`, `js/demo.js`, `js/lobby.js`, `js/japan.js` y `js/skywars.js`: ejemplos generados por código.
 - `js/jp-kit.js`: piezas japonesas compartidas (isla, torii, tōrō, tejados curvos, pagoda, cerezos, bambú).
 - `js/schem-writer.js`: exportador a Sponge `.schem` v2, incluido el texto de los carteles.
 
@@ -189,6 +189,27 @@ node tools/generar-lobby.mjs castillo castillo-princesas.schem
 ```
 
 Al hacer `//paste` quedas al final del camino, mirando al puente y la puerta.
+
+## Castillo de princesas v2
+
+`js/castle2.js`: el mismo castillo, pero con todas las torres habitables y escaleras cómodas.
+El castillo original (`js/castle.js`) sigue igual.
+
+- **Torres de la muralla y de la puerta**: puerta al patio, escalera de caracol hasta el adarve
+  y cuarto de guardia arriba (barriles, cofre, mesa de trabajo y farol).
+- **Torres delanteras del palacio**: escaleras de caracol desde las esquinas del salón de baile
+  hasta la planta alta y, más arriba, el mirador de la princesa y la sala de música.
+- **Torres traseras**: vestidor (junto al dormitorio) y rincón de lectura (junto a la biblioteca);
+  por una escalera de mano se sube a la **sala del tesoro** y al **observatorio**.
+- **Torre principal**: gran escalera de caracol desde el salón de té hasta la habitación con balcón.
+- **Torrecillas del tejado**: miradores con bancos, con escalera de mano desde el dormitorio y la
+  biblioteca.
+- **Planta alta**: pasillo a lo largo de la fachada que une las escaleras, las salas y el balcón.
+- Las escaleras de caracol son de losas (medio bloque por paso), así que se suben andando sin saltar.
+
+```bash
+node tools/generar-lobby.mjs castillo2 castillo-princesas-v2.schem
+```
 
 ## Mansión survival
 
