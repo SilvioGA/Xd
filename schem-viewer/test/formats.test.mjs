@@ -225,3 +225,24 @@ test('El lobby se exporta a .schem v2 y se vuelve a leer igual', async () => {
     assert.equal(back.palette[back.blocks[i]].key, s.palette[s.blocks[i]].key);
   }
 });
+
+test('El lobby japonés tiene el spawn delante de todo y se exporta bien', async () => {
+  const { buildJapaneseLobby, JAPAN_SPAWN } = await import('../js/japan.js');
+  const { toSpongeV2 } = await import('../js/schem-writer.js');
+  const s = buildJapaneseLobby();
+  assert.equal(s.width, 50); assert.equal(s.length, 100);
+  const [sx, sy, sz] = JAPAN_SPAWN;
+  // El jugador aparece sobre suelo firme, con dos bloques de aire libres.
+  assert.notEqual(s.get(sx, sy - 1, sz), 0);
+  assert.equal(s.get(sx, sy, sz), 0);
+  assert.equal(s.get(sx, sy + 1, sz), 0);
+  // Al fondo está el portal principal del templo.
+  const temple = s.palette.findIndex((e) => e.name === 'minecraft:yellow_stained_glass');
+  assert.ok(temple > 0);
+  const counts = s.countBlocks();
+  for (const e of s.palette.filter((_, i) => counts[i] > 0)) {
+    if (e.name.endsWith('_leaves')) assert.equal(e.props.persistent, 'true', e.key);
+  }
+  const back = await parseSchematicFile(gzipSync(toSpongeV2(s, { origin: JAPAN_SPAWN })));
+  for (let i = 0; i < s.blocks.length; i += 101) assert.equal(back.palette[back.blocks[i]].key, s.palette[s.blocks[i]].key);
+});

@@ -10,7 +10,7 @@ const HEIGHT = 48;
 export const LOBBY_SURFACE = 20; // Y del suelo de la plaza
 const CENTER = 24.5; // centro
 
-function rng(seed) {
+export function rng(seed) {
   return () => {
     seed |= 0;
     seed = (seed + 0x6d2b79f5) | 0;

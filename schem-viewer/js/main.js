@@ -5,6 +5,7 @@ import { Mesher, CHUNK } from './mesher.js';
 import { prettyName } from './blocks.js';
 import { buildDemo } from './demo.js';
 import { buildLobby } from './lobby.js';
+import { buildJapaneseLobby } from './japan.js';
 
 const $ = (id) => document.getElementById(id);
 const stage = $('stage');
@@ -393,6 +394,7 @@ $('file-input').addEventListener('change', (e) => {
   e.target.value = '';
 });
 const EXAMPLES = {
+  japones: () => load(buildJapaneseLobby(), 'lobby-japones'),
   lobby: () => load(buildLobby(), 'lobby-epico'),
   casita: () => load(buildDemo(), 'casita-ejemplo'),
 };
@@ -504,5 +506,5 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => sche
 new MutationObserver(() => schem && buildHelpers()).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
 resize();
-EXAMPLES.lobby();
+EXAMPLES.japones();
 requestAnimationFrame(frame);

@@ -43,9 +43,23 @@ npm test           # pruebas de los parsers y el mesher (Node 18+)
 cuatro portales de colores para modos de juego, jardines de cerezos y cuatro islotes.
 
 ```bash
-node tools/generar-lobby.mjs lobby-epico.schem
+node tools/generar-lobby.mjs epico lobby-epico.schem
 ```
 
 Para pegarlo con WorldEdit (1.20+): copia el archivo a `plugins/WorldEdit/schematics/`,
 colócate donde quieras la plaza y ejecuta `//schem load lobby-epico` y `//paste`.
 Quedarás de pie en la plaza, al sur de la fuente. La isla se extiende 21 bloques hacia abajo.
+
+## Lobby japonés 50×100
+
+`js/japan.js` genera un lobby alargado. Apareces en el extremo sur mirando al norte
+y todo queda delante: plaza con flor de cerezo, gran torii, túnel de torii entre bambú,
+puente rojo sobre el arroyo, cuatro santuarios de colores (modos de juego), jardín zen,
+pagoda de cinco pisos y el templo principal con el portal dorado al fondo.
+
+```bash
+node tools/generar-lobby.mjs japones lobby-japones.schem
+```
+
+Al hacer `//paste` quedas en el centro de la plaza de aparición. Mira al norte
+(`/tp @s ~ ~ ~ 180 0`) y usa `/setworldspawn` para fijar el spawn ahí.
