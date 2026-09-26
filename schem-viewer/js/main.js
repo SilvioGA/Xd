@@ -12,6 +12,7 @@ import { buildTree } from './tree.js';
 import { buildIsland } from './island.js';
 import { buildMansion } from './mansion.js';
 import { buildCastle } from './castle.js';
+import { buildCemetery } from './cemetery.js';
 import { PlayerPhysics, findSpawn } from './player.js';
 
 const $ = (id) => document.getElementById(id);
@@ -402,6 +403,7 @@ $('file-input').addEventListener('change', (e) => {
   e.target.value = '';
 });
 const EXAMPLES = {
+  cementerio: () => load(buildCemetery(), 'cementerio-epico'),
   castillo: () => load(buildCastle(), 'castillo-princesas'),
   mansion: () => load(buildMansion(), 'mansion-survival'),
   isla: () => load(buildIsland(), 'isla-tropical'),
@@ -718,5 +720,5 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => sche
 new MutationObserver(() => schem && buildHelpers()).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
 resize();
-EXAMPLES.castillo();
+EXAMPLES.cementerio();
 requestAnimationFrame(frame);

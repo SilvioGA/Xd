@@ -49,7 +49,7 @@ Si el schematic no trae punto de aparición, apareces en el borde sur mirando al
 - `js/mesher.js`: geometría por chunks de 32³ con caras ocultas eliminadas; selección por DDA.
 - `js/main.js`: escena three.js e interfaz.
 - `js/player.js`: física del modo jugador (colisiones, escalones, escaleras de mano, agua, vuelo, correr).
-- `js/castle.js`, `js/mansion.js`, `js/island.js`, `js/tree.js`, `js/rabbit.js`, `js/demo.js`, `js/lobby.js`, `js/japan.js` y `js/skywars.js`: ejemplos generados por código.
+- `js/cemetery.js`, `js/castle.js`, `js/mansion.js`, `js/island.js`, `js/tree.js`, `js/rabbit.js`, `js/demo.js`, `js/lobby.js`, `js/japan.js` y `js/skywars.js`: ejemplos generados por código.
 - `js/jp-kit.js`: piezas japonesas compartidas (isla, torii, tōrō, tejados curvos, pagoda, cerezos, bambú).
 - `js/schem-writer.js`: exportador a Sponge `.schem` v2, incluido el texto de los carteles.
 
@@ -139,6 +139,23 @@ node tools/generar-lobby.mjs isla isla-tropical.schem
 
 El mar llega hasta los bordes del schematic: pégalo en un océano (o en un mundo vacío) para que
 el agua no se derrame por los lados.
+
+## Cementerio épico
+
+`js/cemetery.js`: cementerio gótico de 81×90.
+
+- **Columnas detalladas**: plinto de piedra negra, basa con molduras de escaleras, fuste estriado
+  (cruz de andesita pulida con muretes en las esquinas, musgo y enredaderas), collarino, capital
+  que se abre hacia fuera, ábaco con farolillos de almas colgando y un pebetero con fuego de almas.
+- **Gran puerta** entre dos columnas monumentales con dintel, frontón y calavera de wither.
+- **Avenida** con ocho columnas hasta el **mausoleo**: templo sobre escalinata con ocho columnas,
+  frontón de pizarra oscura y, dentro, un sarcófago con velas, bancos y ventanas moradas.
+- **Tumbas** de cinco tipos (lápidas, cruces, estelas con losa, calaveras), obeliscos, dos criptas
+  con puerta de hierro, árboles muertos con telarañas, calabazas y verja de hierro con pilares.
+
+```bash
+node tools/generar-lobby.mjs cementerio cementerio-epico.schem
+```
 
 ## Castillo de princesas
 
