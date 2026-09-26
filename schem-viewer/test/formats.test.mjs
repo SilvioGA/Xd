@@ -358,3 +358,74 @@ test('Isla tropical: mar, playa, arrecife, palmeras con cocos y muelle', async (
   assert.equal(s.get(0, ISLAND_SEA + 1, 0), 0);
   for (const e of s.palette.filter((_, i) => counts[i] > 0)) if (e.name.endsWith('_leaves')) assert.equal(e.props.persistent, 'true');
 });
+
+test('Mansión survival: todo funciona como en el juego', async () => {
+  const { buildMansion, MANSION_GROUND: G } = await import('../js/mansion.js');
+  const s = buildMansion();
+  const nm = (x, y, z) => s.palette[s.get(x, y, z)].name.slice(10);
+  const all = (name) => {
+    const out = [];
+    for (let y = 0; y < s.height; y++) for (let z = 0; z < s.length; z++) for (let x = 0; x < s.width; x++) if (nm(x, y, z) === name) out.push([x, y, z]);
+    return out;
+  };
+
+  // Encantamientos: al menos 15 librerías válidas (a 2 bloques, con aire en medio) → nivel 30.
+  const [[ex, ey, ez]] = all('enchanting_table');
+  let power = 0;
+  for (let dz = -1; dz <= 1; dz++) for (let dx = -1; dx <= 1; dx++) {
+    if (!dx && !dz) continue;
+    if (nm(ex + dx, ey, ez + dz) !== 'air' || nm(ex + dx, ey + 1, ez + dz) !== 'air') continue;
+    for (const dy of [0, 1]) if (nm(ex + dx * 2, ey + dy, ez + dz * 2) === 'bookshelf') power++;
+    if (dx && dz) {
+      for (const dy of [0, 1]) {
+        if (nm(ex + dx * 2, ey + dy, ez + dz) === 'bookshelf') power++;
+        if (nm(ex + dx, ey + dy, ez + dz * 2) === 'bookshelf') power++;
+      }
+    }
+  }
+  assert.ok(power >= 15, `librerías que cuentan: ${power}`);
+
+  // Toda la tierra de cultivo tiene agua a 4 bloques o menos (misma altura o una más abajo).
+  for (const [x, y, z] of all('farmland')) {
+    let wet = false;
+    for (let dz = -4; dz <= 4 && !wet; dz++) for (let dx = -4; dx <= 4 && !wet; dx++) for (const dy of [0, 1]) if (nm(x + dx, y + dy, z + dz) === 'water') wet = true;
+    assert.ok(wet, `tierra seca en ${x},${y},${z}`);
+  }
+  // Los cultivos están sobre tierra de cultivo y la caña de azúcar junto al agua.
+  for (const crop of ['wheat', 'carrots', 'potatoes', 'beetroots']) for (const [x, y, z] of all(crop)) assert.equal(nm(x, y - 1, z), 'farmland');
+  for (const [x, y, z] of all('sugar_cane')) {
+    let yy = y;
+    while (nm(x, yy - 1, z) === 'sugar_cane') yy--;
+    assert.ok([[1, 0], [-1, 0], [0, 1], [0, -1]].some(([a, b]) => nm(x + a, yy - 1, z + b) === 'water'), `caña sin agua en ${x},${z}`);
+  }
+
+  // Camas completas (cabecera + pies) y puertas completas (mitad de abajo + mitad de arriba).
+  const props = (x, y, z) => s.palette[s.get(x, y, z)].props;
+  for (const color of ['red', 'light_blue', 'lime', 'yellow']) {
+    for (const [x, y, z] of all(`${color}_bed`)) {
+      const p = props(x, y, z);
+      const dz = p.part === 'head' ? 1 : -1; // todas miran al norte
+      assert.equal(nm(x, y, z + dz), `${color}_bed`, `cama incompleta en ${x},${y},${z}`);
+    }
+  }
+  for (const wood of ['spruce', 'dark_oak']) for (const [x, y, z] of all(`${wood}_door`)) {
+    const other = props(x, y, z).half === 'lower' ? y + 1 : y - 1;
+    assert.equal(nm(x, other, z), `${wood}_door`, `puerta incompleta en ${x},${y},${z}`);
+  }
+
+  // Portal del Nether: 14 de obsidiana con hueco de 2×3.
+  const obs = all('obsidian');
+  assert.equal(obs.length, 14);
+  const xs = obs.map((o) => o[0]);
+  const ys = obs.map((o) => o[1]);
+  const pz = obs[0][2];
+  for (let x = Math.min(...xs) + 1; x < Math.max(...xs); x++) for (let y = Math.min(...ys) + 1; y < Math.max(...ys); y++) assert.equal(nm(x, y, pz), 'air');
+
+  // Muralla cerrada salvo la puerta del sur.
+  for (let x = 0; x < s.width; x++) for (const z of [0, s.length - 1]) assert.notEqual(nm(x, G + 1, z), 'air', `hueco en la muralla ${x},${z}`);
+  for (let z = 0; z < s.length; z++) for (const x of [0, s.width - 1]) assert.notEqual(nm(x, G + 1, z), 'air', `hueco en la muralla ${x},${z}`);
+
+  // Fuente de agua infinita: al menos un cuadrado de 2×2 de agua.
+  const water = new Set(all('water').filter(([, y]) => y === G).map(([x, , z]) => `${x},${z}`));
+  assert.ok([...water].some((k) => { const [x, z] = k.split(',').map(Number); return water.has(`${x + 1},${z}`) && water.has(`${x},${z + 1}`) && water.has(`${x + 1},${z + 1}`); }));
+});

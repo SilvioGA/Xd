@@ -1,5 +1,5 @@
 // Genera los lobbies de ejemplo en .schem para WorldEdit.
-// Uso: node tools/generar-lobby.mjs [isla|arbol|conejo|skywars|japones|epico] [salida.schem]
+// Uso: node tools/generar-lobby.mjs [mansion|isla|arbol|conejo|skywars|japones|epico] [salida.schem]
 import { writeFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { buildLobby, LOBBY_SURFACE } from '../js/lobby.js';
@@ -8,10 +8,13 @@ import { buildSkyWarsLobby, SKYWARS_SPAWN } from '../js/skywars.js';
 import { buildRabbit, RABBIT_BASE } from '../js/rabbit.js';
 import { buildTree, TREE_GROUND } from '../js/tree.js';
 import { buildIsland, ISLAND_SEA } from '../js/island.js';
+import { buildMansion, MANSION_GROUND } from '../js/mansion.js';
 import { toSpongeV2 } from '../js/schem-writer.js';
 
 const LOBBIES = {
   // origin: celda donde queda el jugador al hacer //paste.
+  // El jugador aparece en la puerta de la muralla, mirando a la casa.
+  mansion: { build: buildMansion, origin: [31, MANSION_GROUND + 1, 59], name: 'Mansión survival', file: 'mansion-survival.schem' },
   isla: { build: buildIsland, origin: [38, ISLAND_SEA + 2, 66], name: 'Isla tropical', file: 'isla-tropical.schem' },
   arbol: { build: buildTree, origin: [28, TREE_GROUND + 1, 54], name: 'Roble gigante', file: 'roble-gigante.schem' },
   // El jugador queda delante de los tres conejos, frente al del medio.

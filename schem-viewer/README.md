@@ -124,3 +124,24 @@ node tools/generar-lobby.mjs isla isla-tropical.schem
 
 El mar llega hasta los bordes del schematic: pégalo en un océano (o en un mundo vacío) para que
 el agua no se derrame por los lados.
+
+## Mansión survival
+
+`js/mansion.js`: finca de 64×62 lista para jugar en survival.
+
+- **Casa de dos plantas** con entramado de madera oscura y tejado de pizarra.
+  - Planta baja: almacén con 12 cofres dobles etiquetados, cocina (ahumadores, caldero con agua),
+    taller con todas las mesas de trabajo (hornos, alto horno, yunque, afiladora, herrería,
+    cortapiedras, telar, cartografía, flechas) y sala de pociones con verrugas del Nether.
+  - Planta alta: dormitorio principal, dormitorio de invitados, biblioteca con cofre de ender
+    y **sala de encantamientos con 22 librerías bien colocadas (nivel 30)**.
+- **Cultivos**: cuatro parcelas de 9×9 con agua en el centro (trigo, zanahoria, patata,
+  remolacha), caña de azúcar junto a un canal, melones y calabazas.
+- **Corrales** para vacas, ovejas y gallinas (con gallinero), heno y bebederos. Los animales los
+  traes tú.
+- **Fuente de agua infinita**, portal del Nether sin encender, colmenas con flores, granja de
+  árboles y muralla con farolas para que no aparezcan mobs.
+
+```bash
+node tools/generar-lobby.mjs mansion mansion-survival.schem
+```
