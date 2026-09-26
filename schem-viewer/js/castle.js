@@ -1,6 +1,7 @@
 // Castillo de princesas (95×100): muralla blanca con almenas, foso con nenúfares y puente de
 // cerezo, puerta con un corazón encima y cuatro torres de techo cónico rosa con banderas.
-// En el patio: fuente del corazón, jardines de flores, cerezos, cenador y carroza de calabaza.
+// En el patio: fuente del corazón, jardines de flores, cerezos, cenador, carroza de calabaza y
+// una estatua del unicornio rosa sobre una nube.
 // El palacio tiene escalinata, pórtico con balcón y rosetón; dentro, salón de baile con
 // columnas, lámparas de oro, trono y dos escaleras hacia la planta alta (dormitorio de la
 // princesa con cama con dosel, salón de té y biblioteca). La torre principal (casi 80 bloques)
@@ -8,6 +9,7 @@
 
 import { Schematic } from './schematic.js';
 import { rng, finalizeConnections } from './lobby.js';
+import { drawUnicorn } from './unicorn.js';
 
 export const CASTLE_GROUND = 4;
 
@@ -414,9 +416,20 @@ export function buildCastle() {
     }
   };
   bed(21, 67, 42, 72);
-  bed(52, 67, 73, 72);
   bed(21, 54, 27, 60);
   bed(67, 54, 73, 60);
+
+  // Estatua del unicornio rosa sobre una nube, mirando hacia la fuente, con tulipanes alrededor.
+  const UC = [63.5, 69.5];
+  for (let z = 65; z <= 74; z++) for (let x = 51; x <= 75; x++) {
+    const d = Math.hypot((x + 0.5 - UC[0]) / 11.5, (z + 0.5 - UC[1]) / 4);
+    if (pathMask[z * W + x]) continue;
+    if (d <= 1) {
+      set(x, G + 1, z, 'white_wool');
+      if (d <= 0.8) set(x, G + 2, z, d > 0.6 && rand() < 0.5 ? 'white_concrete_powder' : 'white_wool');
+    } else if (d <= 1.35 && z < 74 && isAir(x, G + 1, z)) set(x, G + 1, z, pick(['pink_tulip', 'pink_tulip', 'allium', 'white_tulip']));
+  }
+  drawUnicorn(set, isAir, { ox: UC[0], oy: G + 3, oz: UC[1], scale: 0.55, flip: true });
 
   // Carroza de calabaza con ruedas de oro.
   const CC = [33.5, G + 4.5, 57.5];

@@ -84,6 +84,36 @@ function uUnicornAt(p) {
   return null;
 }
 
+// Dibuja el unicornio con las pezuñas en y = oy y el centro del cuerpo en (ox, oz). scale lo
+// encoge (0,55 da unos 21 bloques de alto) y flip lo gira para que mire al oeste en vez de al este.
+export function drawUnicorn(set, isAir, { ox, oy, oz, scale = 1, flip = false }) {
+  const toLocal = (x, y, z) => [(flip ? ox - (x + 0.5) : x + 0.5 - ox) / scale, (y + 0.5 - oy) / scale, (z + 0.5 - oz) / scale];
+  const x0 = Math.floor(ox - 22 * scale) - 1;
+  const x1 = Math.ceil(ox + 22 * scale) + 1;
+  const zr = Math.ceil(7 * scale) + 1;
+  const zc = Math.floor(oz);
+  for (let y = oy; y <= oy + Math.ceil(40 * scale); y++) for (let z = zc - zr; z <= zc + zr; z++) for (let x = x0; x <= x1; x++) {
+    const m = uUnicornAt(toLocal(x, y, z));
+    if (m) set(x, y, z, m);
+  }
+  // Ojos (negros con brillo blanco y pestañas), mejillas y nariz, en la superficie de las dos caras.
+  const cell = (lx, ly) => [Math.floor(flip ? ox - (lx + 0.5) * scale : ox + (lx + 0.5) * scale), Math.floor(oy + (ly + 0.5) * scale)];
+  const face = (lx, ly, sd, name) => {
+    const [x, y] = cell(lx, ly);
+    let z = zc + sd * zr;
+    while (z !== zc && isAir(x, y, z)) z -= sd;
+    set(x, y, z, name);
+  };
+  for (const sd of [1, -1]) {
+    face(15, 26, sd, 'black_concrete');
+    face(15, 27, sd, 'black_concrete');
+    face(16, 27, sd, 'white_concrete');
+    face(14, 28, sd, 'black_concrete');
+    face(16, 25, sd, 'pink_concrete');
+    face(18, 24, sd, 'magenta_concrete');
+  }
+}
+
 export function buildUnicorn() {
   const W = 66;
   const L = 34;
@@ -123,25 +153,7 @@ export function buildUnicorn() {
     for (let z = OZ - 8; z <= OZ - 6; z++) if (isAir(x, y, z)) set(x, y, z, `${U_RAINBOW[band]}_concrete`);
   }
 
-  // El unicornio.
-  for (let y = B; y < H; y++) for (let z = OZ - 6; z <= OZ + 6; z++) for (let x = OX - 19; x <= OX + 22; x++) {
-    const m = uUnicornAt([x + 0.5 - OX, y + 0.5 - B, z + 0.5 - OZ]);
-    if (m) set(x, y, z, m);
-  }
-  // Ojos (negros con brillo blanco y pestañas), mejillas y orificios de la nariz, en las dos caras.
-  const outer = (x, y, sd) => {
-    let z = sd > 0 ? L - 1 : 0;
-    while (z !== OZ && isAir(x, y, z)) z -= sd;
-    return z;
-  };
-  for (const sd of [1, -1]) {
-    const ex = OX + 15;
-    for (const y of [B + 26, B + 27]) set(ex, y, outer(ex, y, sd), 'black_concrete');
-    set(ex + 1, B + 27, outer(ex + 1, B + 27, sd), 'white_concrete');
-    set(ex - 1, B + 28, outer(ex - 1, B + 28, sd), 'black_concrete');
-    set(ex + 1, B + 25, outer(ex + 1, B + 25, sd), 'pink_concrete');
-    set(OX + 18, B + 24, outer(OX + 18, B + 24, sd), 'magenta_concrete');
-  }
+  drawUnicorn(set, isAir, { ox: OX, oy: B, oz: OZ });
 
   // Corazones flotando y destellos.
   const HEART = ['.X.X.', 'XXXXX', '.XXX.', '..X..'];

@@ -175,7 +175,8 @@ node tools/generar-lobby.mjs cementerio cementerio-epico.schem
 - **Exterior**: foso con nenúfares, puente de cerezo con farolas, muralla blanca con almenas,
   adarve con escaleras de subida y cuatro torres; la puerta tiene rastrillo y un corazón encima.
 - **Patio**: fuente con un corazón rosa, macizos de flores con setos de azalea, cerezos,
-  cenador y una carroza de calabaza con ruedas de oro.
+  cenador, una carroza de calabaza con ruedas de oro y una estatua del unicornio rosa (a algo más
+  de media escala, unos 21 bloques de alto) sobre una nube, mirando hacia la fuente.
 - **Palacio**: escalinata, pórtico con balcón y rosetón en el hastial. Dentro, salón de baile
   con suelo a cuadros, columnas, lámparas de oro, mesas de banquete y trono; dos escaleras suben
   a la planta alta: dormitorio de la princesa (cama con dosel, tocador, armario de shulkers),
