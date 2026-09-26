@@ -24,12 +24,13 @@
       <span class="logo" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
       Visor de Schematics
     </div>
-    <span class="file-chip" id="file-chip">mansion-survival</span>
+    <span class="file-chip" id="file-chip">castillo-princesas</span>
     <div class="bar-actions">
       <label class="sr-only" for="demo-select">Ejemplos</label>
       <select class="btn" id="demo-select">
         <option value="" disabled>Ejemplos</option>
-        <option value="mansion" selected>Mansión survival</option>
+        <option value="castillo" selected>Castillo de princesas</option>
+        <option value="mansion">Mansión survival</option>
         <option value="isla">Isla tropical</option>
         <option value="arbol">Roble gigante</option>
         <option value="conejo">Conejos (bueno, malvado y del amor)</option>
@@ -66,7 +67,7 @@
           <span id="player-target"></span>
         </div>
         <p class="player-lock" id="player-lock-hint" hidden>Haz clic en la vista para mirar con el ratón</p>
-        <p class="player-help"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> moverse · ratón mirar · <kbd>Espacio</kbd> saltar · <kbd>Mayús</kbd> correr · <kbd>F</kbd> volar (atraviesa paredes) · <kbd>Esc</kbd> soltar el ratón</p>
+        <p class="player-help"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> moverse · ratón mirar · <kbd>Espacio</kbd> saltar · <kbd>Mayús</kbd>, <kbd>W</kbd><kbd>W</kbd> (doble toque) o <kbd>R</kbd> correr · <kbd>F</kbd> volar (atraviesa paredes) · <kbd>Esc</kbd> soltar el ratón</p>
         <button class="btn small player-exit" id="btn-exit-player" type="button">Salir del modo jugador</button>
         <div class="touch-pad" id="touch-pad">
           <button class="btn" type="button" data-key="forward" aria-label="Avanzar">▲</button>
@@ -75,6 +76,7 @@
           <button class="btn" type="button" data-key="right" aria-label="Derecha">▶</button>
           <button class="btn" type="button" data-key="jump" aria-label="Saltar">Saltar</button>
           <button class="btn" type="button" data-key="fly" aria-label="Volar">Volar</button>
+          <button class="btn" type="button" data-key="run" aria-label="Correr" aria-pressed="false">Correr</button>
         </div>
       </div>
     </section>

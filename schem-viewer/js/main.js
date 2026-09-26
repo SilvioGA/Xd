@@ -11,6 +11,7 @@ import { buildRabbit } from './rabbit.js';
 import { buildTree } from './tree.js';
 import { buildIsland } from './island.js';
 import { buildMansion } from './mansion.js';
+import { buildCastle } from './castle.js';
 import { PlayerPhysics, findSpawn } from './player.js';
 
 const $ = (id) => document.getElementById(id);
@@ -401,6 +402,7 @@ $('file-input').addEventListener('change', (e) => {
   e.target.value = '';
 });
 const EXAMPLES = {
+  castillo: () => load(buildCastle(), 'castillo-princesas'),
   mansion: () => load(buildMansion(), 'mansion-survival'),
   isla: () => load(buildIsland(), 'isla-tropical'),
   arbol: () => load(buildTree(), 'roble-gigante'),
@@ -505,6 +507,7 @@ controls.addEventListener('change', () => { pointer.dirty = pointer.dirty || !to
 
 // ---------- Modo jugador ----------
 const SKY = new THREE.Color('#9ccbf2');
+
 const player = { active: false, physics: null, input: {}, locked: false, drag: null, saved: null, hudTime: 0 };
 const KEYS = {
   KeyW: 'forward', ArrowUp: 'forward', KeyS: 'back', ArrowDown: 'back', KeyA: 'left', ArrowLeft: 'left',
@@ -544,6 +547,8 @@ function enterPlayer() {
   player.physics = new PlayerPhysics(mesher);
   player.physics.reset(findSpawn(schem, player.physics));
   player.input = {};
+  player.runTap = false;
+  setRunLock(false);
   controls.enabled = false;
   helpers.visible = false;
   hideTooltip();
@@ -624,25 +629,40 @@ renderer.domElement.addEventListener('pointermove', (e) => {
   player.drag.y = e.clientY;
 });
 window.addEventListener('pointerup', () => { player.drag = null; });
+// Correr: doble toque de W (como en Minecraft) mientras se mantiene, o R para dejarlo fijo.
+function setRunLock(on) {
+  player.runLock = on;
+  refreshRun();
+  $('touch-pad').querySelector('[data-key="run"]')?.setAttribute('aria-pressed', String(on));
+}
+function refreshRun() { player.input.run = !!(player.runLock || player.runTap); }
 window.addEventListener('keydown', (e) => {
   if (!player.active) return;
+  if ((e.code === 'KeyW' || e.code === 'ArrowUp') && !e.repeat) {
+    const now = e.timeStamp; // hora de la pulsación, aunque el fotograma vaya lento
+    if (now - (player.lastForward ?? -1e9) < 300) { player.runTap = true; refreshRun(); }
+    player.lastForward = now;
+  }
+  if (e.code === 'KeyR' && !e.repeat) setRunLock(!player.runLock);
   if (KEYS[e.code]) { player.input[KEYS[e.code]] = true; e.preventDefault(); }
   if (e.code === 'KeyF' && !e.repeat) player.physics.setFlying(!player.physics.flying);
   if (e.code === 'Escape' && !player.locked) exitPlayer();
 });
 window.addEventListener('keyup', (e) => {
   if (player.active && KEYS[e.code]) player.input[KEYS[e.code]] = false;
+  if (player.active && KEYS[e.code] === 'forward' && !player.input.forward) { player.runTap = false; refreshRun(); }
 });
-window.addEventListener('blur', () => { player.input = {}; });
+window.addEventListener('blur', () => { player.input = {}; player.runTap = false; refreshRun(); });
 // Botones táctiles.
 for (const b of document.querySelectorAll('#touch-pad [data-key]')) {
   const key = b.dataset.key;
   const on = (e) => {
     e.preventDefault();
     if (key === 'fly') { player.physics.setFlying(!player.physics.flying); return; }
+    if (key === 'run') { setRunLock(!player.runLock); return; }
     player.input[key] = true;
   };
-  const off = () => { if (key !== 'fly') player.input[key] = false; };
+  const off = () => { if (key !== 'fly' && key !== 'run') player.input[key] = false; };
   b.addEventListener('pointerdown', on);
   b.addEventListener('pointerup', off);
   b.addEventListener('pointerleave', off);
@@ -656,10 +676,16 @@ function updatePlayer(dt) {
   const [ex, ey, ez] = p.eye();
   camera.position.set(ex, ey, ez);
   camera.rotation.set(p.pitch, p.yaw, 0, 'YXZ');
+  // Al correr la vista se abre un poco, como en Minecraft.
+  const fov = 75 + (p.running || (p.flying && player.input.run) ? 10 : 0);
+  if (Math.abs(camera.fov - fov) > 0.05) {
+    camera.fov += (fov - camera.fov) * Math.min(1, dt * 10);
+    camera.updateProjectionMatrix();
+  }
   player.hudTime += dt;
   if (player.hudTime < 0.1) return;
   player.hudTime = 0;
-  $('player-mode').textContent = p.flying ? 'Volando' : p.inFluid ? 'Nadando' : 'Caminando';
+  $('player-mode').textContent = p.flying ? (player.input.run ? 'Volando rápido' : 'Volando') : p.inFluid ? 'Nadando' : p.running ? 'Corriendo' : 'Caminando';
   $('player-pos').textContent = `x ${Math.floor(p.pos[0])}  y ${Math.floor(p.pos[1])}  z ${Math.floor(p.pos[2])}`;
   // Bloque al que apunta la mira (hasta 8 bloques).
   const dir = new THREE.Vector3(0, 0, -1).applyEuler(camera.rotation);
@@ -692,5 +718,5 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => sche
 new MutationObserver(() => schem && buildHelpers()).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
 resize();
-EXAMPLES.mansion();
+EXAMPLES.castillo();
 requestAnimationFrame(frame);

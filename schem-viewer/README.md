@@ -26,6 +26,20 @@ npm test           # pruebas de los parsers y el mesher (Node 18+)
 - **Materiales**: lista con cantidades en stacks de 64 y shulkers; puedes ocultar bloques concretos y copiar la lista.
 - Pasa el ratón por un bloque para ver su nombre, coordenadas y propiedades.
 
+## Modo jugador
+
+**Modo jugador** te pone dentro de la construcción en primera persona, con colisiones reales.
+Si el schematic no trae punto de aparición, apareces en el borde sur mirando al norte.
+
+| Acción | Teclado | Móvil |
+|---|---|---|
+| Moverse | `W` `A` `S` `D` o flechas | ▲ ◀ ▼ ▶ |
+| Mirar | ratón (se captura al hacer clic) | arrastrar |
+| Saltar / subir volando | `Espacio` | Saltar |
+| Correr | mantener `Mayús`, doble toque de `W` o `R` para dejarlo activado | Correr |
+| Volar (atraviesa paredes) | `F`; volando, `Mayús` baja y correr va al doble de rápido | Volar |
+| Soltar el ratón / salir | `Esc` | Salir del modo jugador |
+
 ## Estructura
 
 - `js/nbt.js`: lector NBT (gzip/zlib vía `DecompressionStream`).
@@ -34,7 +48,8 @@ npm test           # pruebas de los parsers y el mesher (Node 18+)
 - `js/blocks.js`: colores y formas de los bloques.
 - `js/mesher.js`: geometría por chunks de 32³ con caras ocultas eliminadas; selección por DDA.
 - `js/main.js`: escena three.js e interfaz.
-- `js/demo.js`, `js/lobby.js`, `js/japan.js` y `js/skywars.js`: ejemplos generados por código.
+- `js/player.js`: física del modo jugador (colisiones, escalones, escaleras de mano, agua, vuelo, correr).
+- `js/castle.js`, `js/mansion.js`, `js/island.js`, `js/tree.js`, `js/rabbit.js`, `js/demo.js`, `js/lobby.js`, `js/japan.js` y `js/skywars.js`: ejemplos generados por código.
 - `js/jp-kit.js`: piezas japonesas compartidas (isla, torii, tōrō, tejados curvos, pagoda, cerezos, bambú).
 - `js/schem-writer.js`: exportador a Sponge `.schem` v2, incluido el texto de los carteles.
 
@@ -124,6 +139,27 @@ node tools/generar-lobby.mjs isla isla-tropical.schem
 
 El mar llega hasta los bordes del schematic: pégalo en un océano (o en un mundo vacío) para que
 el agua no se derrame por los lados.
+
+## Castillo de princesas
+
+`js/castle.js`: castillo de cuento de 95×100 con techos cónicos rosas y banderas en cada torre.
+
+- **Exterior**: foso con nenúfares, puente de cerezo con farolas, muralla blanca con almenas,
+  adarve con escaleras de subida y cuatro torres; la puerta tiene rastrillo y un corazón encima.
+- **Patio**: fuente con un corazón rosa, macizos de flores con setos de azalea, cerezos,
+  cenador y una carroza de calabaza con ruedas de oro.
+- **Palacio**: escalinata, pórtico con balcón y rosetón en el hastial. Dentro, salón de baile
+  con suelo a cuadros, columnas, lámparas de oro, mesas de banquete y trono; dos escaleras suben
+  a la planta alta: dormitorio de la princesa (cama con dosel, tocador, armario de shulkers),
+  salón de té y biblioteca.
+- **Torre principal** de casi 80 bloques: se sube por una escalera de mano desde el salón de té
+  hasta la habitación de arriba, que tiene un balcón circular.
+
+```bash
+node tools/generar-lobby.mjs castillo castillo-princesas.schem
+```
+
+Al hacer `//paste` quedas al final del camino, mirando al puente y la puerta.
 
 ## Mansión survival
 

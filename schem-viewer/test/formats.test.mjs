@@ -481,6 +481,25 @@ test('Modo jugador: cae al suelo, sube losas, choca con paredes y trepa escalera
   run(cp, {}, 1);
   assert.ok(Math.abs(cp.pos[1] - (3 + 1 / 16)) < 1e-6 && cp.onGround, `de pie sobre la alfombra flotante (y=${cp.pos[1]})`);
 
+  // Correr: más rápido que andar (con Mayús o con la opción de correr), y volando el doble.
+  const flat = new Schematic(6, 4, 40);
+  for (let z = 0; z < 40; z++) for (let x = 0; x < 6; x++) flat.set(x, 0, z, 'stone');
+  const speedOf = (input, flying = false) => {
+    const r = new PlayerPhysics(new Mesher(flat));
+    r.reset([2.5, 1, 38.5, 0]);
+    if (flying) r.setFlying(true);
+    run(r, input, 0.5);
+    const z0 = r.pos[2];
+    run(r, input, 0.5);
+    return { v: (z0 - r.pos[2]) / 0.5, running: r.running };
+  };
+  const walk = speedOf({ forward: true });
+  const sprint = speedOf({ forward: true, run: true });
+  assert.ok(Math.abs(walk.v - 4.3) < 0.2 && !walk.running, `andando ${walk.v}`);
+  assert.ok(sprint.v > walk.v * 1.4 && sprint.running, `corriendo ${sprint.v}`);
+  assert.ok(Math.abs(speedOf({ forward: true, sprint: true }).v - sprint.v) < 1e-6, 'Mayús también corre');
+  assert.ok(speedOf({ forward: true, run: true }, true).v > speedOf({ forward: true }, true).v * 1.9, 'volando rápido');
+
   // Punto de aparición automático: de pie en el borde sur, mirando al norte.
   const sp = findSpawn(s, p);
   assert.equal(sp[1], 1);
@@ -498,4 +517,55 @@ test('Formato clásico: estandartes con orientación y color, y AddBlocks como W
   const s = await parseSchematicFile(buf);
   assert.equal(s.palette[s.get(0, 0, 0)].key, 'minecraft:yellow_wall_banner[facing=east]');
   assert.equal(s.palette[s.get(1, 0, 0)].name, 'minecraft:stone');
+});
+
+test('Castillo de princesas: entrada libre, torres con remate, trono, cama y escalera de la torre', async () => {
+  const { buildCastle, CASTLE_GROUND: G } = await import('../js/castle.js');
+  const { PlayerPhysics } = await import('../js/player.js');
+  const s = buildCastle();
+  assert.deepEqual([s.width, s.height, s.length], [95, 82, 100]);
+  const nm = (x, y, z) => s.palette[s.get(x, y, z)].name.slice(10);
+  const props = (x, y, z) => s.palette[s.get(x, y, z)].props;
+  const all = (name) => {
+    const out = [];
+    for (let y = 0; y < s.height; y++) for (let z = 0; z < s.length; z++) for (let x = 0; x < s.width; x++) if (nm(x, y, z) === name) out.push([x, y, z]);
+    return out;
+  };
+
+  // Simétrico respecto a x = 47,5 en la muralla y el palacio.
+  for (const [y, z] of [[G + 5, 77], [G + 12, 44], [G + 20, 30]]) for (let x = 0; x < 47; x++) {
+    // Se compara el tipo (aire, cristal, sólido): los muros mezclan cuarzo al azar.
+    const kind = (n) => (n === 'air' ? 'air' : n.includes('glass') ? 'glass' : 'solid');
+    const a = nm(x, y, z);
+    const b = nm(94 - x, y, z);
+    if (!/(banner|stairs|door|flower|tulip|petals|leaves|log|wood|grass|lily)/.test(a + b)) assert.equal(kind(a), kind(b), `asimetría en ${x},${y},${z}: ${a} / ${b}`);
+  }
+  // Cada techo cónico termina en oro, varilla y bandera rosa.
+  const flags = all('pink_banner');
+  assert.ok(flags.length >= 14, `banderas: ${flags.length}`);
+  for (const [x, y, z] of flags) {
+    assert.equal(nm(x, y - 1, z), 'end_rod');
+    assert.equal(nm(x, y - 3, z), 'gold_block');
+  }
+  // Trono sobre el estrado y cama de dosel completa.
+  assert.equal(nm(47, G + 4, 22), 'quartz_stairs');
+  for (const [x, y, z] of all('pink_bed')) assert.equal(nm(x, y, z + (props(x, y, z).part === 'head' ? 1 : -1)), 'pink_bed');
+  for (const [x, y, z] of all('cherry_door')) assert.equal(nm(x, props(x, y, z).half === 'lower' ? y + 1 : y - 1, z), 'cherry_door');
+  // Escalera de mano sin cortes desde la planta alta hasta la habitación de la torre.
+  for (let y = G + 12; y <= G + 35; y++) assert.equal(nm(47, y, 25), 'ladder', `falta escalera en y=${y}`);
+  // Hay agua en el foso y en la fuente, y el corazón de la fuente es rosa.
+  assert.ok(all('water').length > 1000);
+  assert.equal(nm(47, G + 7, 63), 'pink_concrete');
+
+  // Desde el punto de aparición se llega andando hasta la puerta del castillo cruzando el puente.
+  const p = new PlayerPhysics(new Mesher(s));
+  p.reset(s.meta.spawn);
+  for (let t = 0; t < 8; t += 1 / 60) p.step(1 / 60, { forward: true });
+  assert.ok(p.pos[2] < 74 && Math.abs(p.pos[1] - (G + 1)) < 1e-6, `se queda en ${p.pos.map((v) => v.toFixed(1))}`);
+  // Y por la escalera de mano se sube hasta la habitación de la torre.
+  const q = new PlayerPhysics(new Mesher(s));
+  q.reset([47.5, G + 12, 26.2, 0]);
+  let top = 0;
+  for (let t = 0; t < 12; t += 1 / 60) { q.step(1 / 60, { forward: true }); top = Math.max(top, q.pos[1]); }
+  assert.ok(top >= G + 35, `sube hasta y=${top.toFixed(1)}`);
 });

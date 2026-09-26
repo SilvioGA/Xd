@@ -46,6 +46,7 @@ export class PlayerPhysics {
     this.pitch = 0;
     this.onGround = false;
     this.flying = false;
+    this.running = false;
     this.inFluid = false;
     this.spawn = [0, 0, 0, 0];
   }
@@ -160,7 +161,11 @@ export class PlayerPhysics {
     let dx = -sin * f + cos * r;
     let dz = -cos * f - sin * r;
     const len = Math.hypot(dx, dz) || 1;
-    const speed = this.flying ? FLY : input.sprint ? SPRINT : WALK;
+    // Correr: Mayús (en el suelo), doble toque de W, la tecla R o el botón táctil. Volando,
+    // correr duplica la velocidad y Mayús sirve para bajar.
+    const run = !!input.run || (!this.flying && !!input.sprint);
+    this.running = run && !!(f || r) && !this.inFluid;
+    const speed = this.flying ? (input.run ? FLY * 2 : FLY) : run ? SPRINT : WALK;
     const k = this.inFluid ? 0.55 : 1;
     dx = (dx / len) * speed * k * (f || r ? 1 : 0);
     dz = (dz / len) * speed * k * (f || r ? 1 : 0);

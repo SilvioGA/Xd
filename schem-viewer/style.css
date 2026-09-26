@@ -358,7 +358,7 @@ kbd {
 .player-exit { position: absolute; right: 12px; top: 12px; pointer-events: auto; background: var(--panel); }
 .touch-pad {
   display: none; position: absolute; left: 12px; bottom: 56px; pointer-events: auto;
-  grid-template-columns: repeat(3, 48px); grid-template-rows: repeat(2, 48px); gap: 6px;
+  grid-template-columns: repeat(3, 48px); grid-template-rows: repeat(2, 48px) 36px; gap: 6px;
 }
 .touch-pad .btn { justify-content: center; padding: 0; opacity: 0.85; touch-action: none; user-select: none; }
 .touch-pad [data-key="forward"] { grid-column: 2; grid-row: 1; }
@@ -367,6 +367,7 @@ kbd {
 .touch-pad [data-key="right"] { grid-column: 3; grid-row: 2; }
 .touch-pad [data-key="jump"] { grid-column: 3; grid-row: 1; font-size: 11px; }
 .touch-pad [data-key="fly"] { grid-column: 1; grid-row: 1; font-size: 11px; }
+.touch-pad [data-key="run"] { grid-column: 1 / 4; grid-row: 3; font-size: 12px; }
 @media (pointer: coarse) { .touch-pad { display: grid; } .player-help { display: none; } }
 body.playing .view-tools, body.playing .hint { display: none; }
 body.playing .stage canvas { cursor: crosshair; }
