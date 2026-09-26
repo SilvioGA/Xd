@@ -1,5 +1,5 @@
 // Genera los lobbies de ejemplo en .schem para WorldEdit.
-// Uso: node tools/generar-lobby.mjs [cementerio|castillo|mansion|isla|arbol|conejo|skywars|japones|epico] [salida.schem]
+// Uso: node tools/generar-lobby.mjs [unicornio|cementerio|castillo|mansion|isla|arbol|conejo|skywars|japones|epico] [salida.schem]
 import { writeFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { buildLobby, LOBBY_SURFACE } from '../js/lobby.js';
@@ -11,6 +11,7 @@ import { buildIsland, ISLAND_SEA } from '../js/island.js';
 import { buildMansion, MANSION_GROUND } from '../js/mansion.js';
 import { buildCastle, CASTLE_GROUND } from '../js/castle.js';
 import { buildCemetery, CEMETERY_GROUND } from '../js/cemetery.js';
+import { buildUnicorn } from '../js/unicorn.js';
 import { toSpongeV2 } from '../js/schem-writer.js';
 
 const LOBBIES = {
@@ -18,6 +19,8 @@ const LOBBIES = {
   // El jugador aparece en la puerta de la muralla, mirando a la casa.
   // El jugador aparece al final del camino, mirando al puente y la puerta.
   // El jugador aparece delante de la gran puerta, mirando a la avenida.
+  // El jugador queda en el prado, delante del unicornio.
+  unicornio: { build: buildUnicorn, origin: [31, 2, 32], name: 'Unicornio rosa', file: 'unicornio-rosa.schem' },
   cementerio: { build: buildCemetery, origin: [40, CEMETERY_GROUND + 1, 87], name: 'Cementerio épico', file: 'cementerio-epico.schem' },
   castillo: { build: buildCastle, origin: [47, CASTLE_GROUND + 1, 97], name: 'Castillo de princesas', file: 'castillo-princesas.schem' },
   mansion: { build: buildMansion, origin: [31, MANSION_GROUND + 1, 59], name: 'Mansión survival', file: 'mansion-survival.schem' },

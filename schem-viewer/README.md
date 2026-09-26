@@ -49,7 +49,7 @@ Si el schematic no trae punto de aparición, apareces en el borde sur mirando al
 - `js/mesher.js`: geometría por chunks de 32³ con caras ocultas eliminadas; selección por DDA.
 - `js/main.js`: escena three.js e interfaz.
 - `js/player.js`: física del modo jugador (colisiones, escalones, escaleras de mano, agua, vuelo, correr).
-- `js/cemetery.js`, `js/castle.js`, `js/mansion.js`, `js/island.js`, `js/tree.js`, `js/rabbit.js`, `js/demo.js`, `js/lobby.js`, `js/japan.js` y `js/skywars.js`: ejemplos generados por código.
+- `js/unicorn.js`, `js/cemetery.js`, `js/castle.js`, `js/mansion.js`, `js/island.js`, `js/tree.js`, `js/rabbit.js`, `js/demo.js`, `js/lobby.js`, `js/japan.js` y `js/skywars.js`: ejemplos generados por código.
 - `js/jp-kit.js`: piezas japonesas compartidas (isla, torii, tōrō, tejados curvos, pagoda, cerezos, bambú).
 - `js/schem-writer.js`: exportador a Sponge `.schem` v2, incluido el texto de los carteles.
 
@@ -139,6 +139,17 @@ node tools/generar-lobby.mjs isla isla-tropical.schem
 
 El mar llega hasta los bordes del schematic: pégalo en un océano (o en un mundo vacío) para que
 el agua no se derrame por los lados.
+
+## Unicornio rosa
+
+`js/unicorn.js`: estatua de un unicornio rosa de unos 35 bloques de alto, de perfil y con una pata
+delantera levantada. Cuerno dorado en espiral, crin y cola arcoíris, pezuñas de oro, ojos con
+brillo y mejillas sonrosadas. Está sobre una nube, con un arcoíris detrás, corazones flotando,
+destellos y un prado de flores.
+
+```bash
+node tools/generar-lobby.mjs unicornio unicornio-rosa.schem
+```
 
 ## Cementerio épico
 

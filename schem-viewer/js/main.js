@@ -13,6 +13,7 @@ import { buildIsland } from './island.js';
 import { buildMansion } from './mansion.js';
 import { buildCastle } from './castle.js';
 import { buildCemetery } from './cemetery.js';
+import { buildUnicorn } from './unicorn.js';
 import { PlayerPhysics, findSpawn } from './player.js';
 
 const $ = (id) => document.getElementById(id);
@@ -403,6 +404,7 @@ $('file-input').addEventListener('change', (e) => {
   e.target.value = '';
 });
 const EXAMPLES = {
+  unicornio: () => load(buildUnicorn(), 'unicornio-rosa'),
   cementerio: () => load(buildCemetery(), 'cementerio-epico'),
   castillo: () => load(buildCastle(), 'castillo-princesas'),
   mansion: () => load(buildMansion(), 'mansion-survival'),
@@ -720,5 +722,5 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => sche
 new MutationObserver(() => schem && buildHelpers()).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
 resize();
-EXAMPLES.cementerio();
+EXAMPLES.unicornio();
 requestAnimationFrame(frame);
