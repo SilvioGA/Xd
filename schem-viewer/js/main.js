@@ -15,6 +15,7 @@ import { buildCastle } from './castle.js';
 import { buildCastle2 } from './castle2.js';
 import { buildCemetery } from './cemetery.js';
 import { buildUnicorn } from './unicorn.js';
+import { buildMouseKart } from './mousekart.js';
 import { PlayerPhysics, findSpawn } from './player.js';
 
 const $ = (id) => document.getElementById(id);
@@ -405,6 +406,7 @@ $('file-input').addEventListener('change', (e) => {
   e.target.value = '';
 });
 const EXAMPLES = {
+  raton: () => load(buildMouseKart(), 'raton-go-kart'),
   castillo2: () => load(buildCastle2(), 'castillo-princesas-v2'),
   unicornio: () => load(buildUnicorn(), 'unicornio-rosa'),
   cementerio: () => load(buildCemetery(), 'cementerio-epico'),
@@ -724,5 +726,5 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => sche
 new MutationObserver(() => schem && buildHelpers()).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
 resize();
-EXAMPLES.castillo2();
+EXAMPLES.raton();
 requestAnimationFrame(frame);

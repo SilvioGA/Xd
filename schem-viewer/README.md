@@ -49,7 +49,7 @@ Si el schematic no trae punto de aparición, apareces en el borde sur mirando al
 - `js/mesher.js`: geometría por chunks de 32³ con caras ocultas eliminadas; selección por DDA.
 - `js/main.js`: escena three.js e interfaz.
 - `js/player.js`: física del modo jugador (colisiones, escalones, escaleras de mano, agua, vuelo, correr).
-- `js/unicorn.js`, `js/cemetery.js`, `js/castle.js`, `js/castle2.js`, `js/mansion.js`, `js/island.js`, `js/tree.js`, `js/rabbit.js`, `js/demo.js`, `js/lobby.js`, `js/japan.js` y `js/skywars.js`: ejemplos generados por código.
+- `js/mousekart.js`, `js/unicorn.js`, `js/cemetery.js`, `js/castle.js`, `js/castle2.js`, `js/mansion.js`, `js/island.js`, `js/tree.js`, `js/rabbit.js`, `js/demo.js`, `js/lobby.js`, `js/japan.js` y `js/skywars.js`: ejemplos generados por código.
 - `js/jp-kit.js`: piezas japonesas compartidas (isla, torii, tōrō, tejados curvos, pagoda, cerezos, bambú).
 - `js/schem-writer.js`: exportador a Sponge `.schem` v2, incluido el texto de los carteles.
 
@@ -139,6 +139,18 @@ node tools/generar-lobby.mjs isla isla-tropical.schem
 
 El mar llega hasta los bordes del schematic: pégalo en un océano (o en un mundo vacío) para que
 el agua no se derrame por los lados.
+
+## Ratón en go-kart
+
+`js/mousekart.js`: estatua de un ratón piloto de unos 25 bloques de alto. Kart rojo con franjas
+blancas, número 1, morro, alerón, motor con tubos de escape, volante y ruedas con llantas; el ratón
+lleva casco rojo con gafas, bufanda amarilla al viento, guantes blancos y cola rosa. Está sobre
+una pista con bordillos, línea y arco de meta a cuadros, neumáticos apilados, banderas y una nube
+de polvo detrás.
+
+```bash
+node tools/generar-lobby.mjs raton raton-go-kart.schem
+```
 
 ## Unicornio rosa
 
