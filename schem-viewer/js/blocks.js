@@ -175,7 +175,11 @@ function resolveColor(fullName) {
   let found = lookup(base);
   if (!found) {
     let stripped = base;
-    for (const p of PREFIXES) if (stripped.startsWith(p)) stripped = stripped.slice(p.length);
+    // Quita prefijos repetidamente: chiseled_polished_blackstone -> blackstone.
+    for (let changed = true; changed;) {
+      changed = false;
+      for (const p of PREFIXES) if (stripped.startsWith(p)) { stripped = stripped.slice(p.length); changed = true; }
+    }
     found = lookup(stripped);
     if (!found && base.startsWith('deepslate_')) found = C.deepslate;
     if (!found && base.startsWith('polished_blackstone')) found = C.blackstone;

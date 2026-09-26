@@ -65,16 +65,19 @@ node tools/generar-lobby.mjs japones lobby-japones.schem
 Al hacer `//paste` quedas en el centro de la plaza de aparición. Mira al norte
 (`/tp @s ~ ~ ~ 180 0`) y usa `/setworldspawn` para fijar el spawn ahí.
 
-## Lobby SkyWars japonés 50×76
+## Lobby SkyWars: templo de la montaña 60×50
 
-`js/skywars.js`: apareces al sur mirando al norte. Delante tienes el torii, el jardín de
-agua con puente rojo, el podio del ranking (izquierda), el pabellón de kits con tres
-pedestales para NPCs (derecha) y, al fondo, el **muro de carteles**: 48 carteles
-(24 Solo en madera de cerezo, 24 Duos en bambú) bajo el título SKY WARS, con una pagoda
-detrás. Encima flotan islas con cofres como en una partida, y una isla central.
+`js/skywars.js`: un valle de otoño al pie de una montaña nevada. Apareces al sur mirando
+al norte y caminas unos 20 bloques, cruzando un puente de piedra sobre el arroyo, hasta
+la fachada del templo tallado en el acantilado. Ahí está el **muro de carteles** para
+unirse a las partidas: 12 de Solo (abedul, franja celeste) y 12 de Duos (bambú, franja
+naranja), cada grupo con su cartel de cabecera. Encima, el título SKYWARS grabado en oro
+en la roca. A la izquierda cae una cascada y a la derecha una escalera tallada sube a un
+santuario con campana.
 
 ```bash
 node tools/generar-lobby.mjs skywars lobby-skywars.schem
 ```
 
-Los carteles ya llevan texto (`[SkyWars]`, mapa, modo); tu plugin puede reescribirlos.
+Los carteles ya llevan texto (`[SkyWars]`, mapa, modo). Regístralos en tu plugin para que
+muestren el estado de cada partida.

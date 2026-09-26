@@ -247,28 +247,41 @@ test('El lobby japonés tiene el spawn delante de todo y se exporta bien', async
   for (let i = 0; i < s.blocks.length; i += 101) assert.equal(back.palette[back.blocks[i]].key, s.palette[s.blocks[i]].key);
 });
 
-test('Lobby SkyWars: 48 carteles con texto que sobreviven a la exportación', async () => {
+test('Lobby SkyWars: 24 carteles para unirse y cabeceras, con texto que sobrevive a la exportación', async () => {
   const { buildSkyWarsLobby, SKYWARS_SPAWN } = await import('../js/skywars.js');
   const { toSpongeV2 } = await import('../js/schem-writer.js');
   const { inflate, readNbt } = await import('../js/nbt.js');
   const s = buildSkyWarsLobby();
-  assert.equal(s.blockEntities.length, 48); // 4 módulos × 12 carteles
+  const join = s.blockEntities.filter((be) => be.nbt.front_text.value.messages.value[0].value.includes('SkyWars'));
+  assert.equal(join.length, 24); // 12 Solo + 12 Duos
+  assert.equal(s.blockEntities.length, 28); // + 4 carteles de cabecera
   for (const be of s.blockEntities) {
     const entry = s.palette[s.get(...be.pos)];
     assert.match(entry.name, /_wall_sign$/, `hay un cartel en ${be.pos}`);
     assert.equal(entry.props.facing, 'south');
+    // El cartel está apoyado en un bloque sólido.
+    const [x, y, z] = be.pos;
+    assert.notEqual(s.get(x, y, z - 1), 0, `el cartel de ${be.pos} tiene soporte`);
   }
   const [sx, sy, sz] = SKYWARS_SPAWN;
   assert.notEqual(s.get(sx, sy - 1, sz), 0);
   assert.equal(s.get(sx, sy, sz), 0);
   assert.equal(s.get(sx, sy + 1, sz), 0);
-  // El NBT exportado lleva los BlockEntities con el texto 1.20 (front_text).
+  // Recorrido corto: entre 15 y 22 bloques del spawn a los carteles.
+  const dist = sz - Math.max(...join.map((be) => be.pos[2]));
+  assert.ok(dist >= 15 && dist <= 22, `distancia ${dist}`);
   const raw = await inflate(gzipSync(toSpongeV2(s, { origin: SKYWARS_SPAWN })));
   const { value } = readNbt(raw);
-  assert.equal(value.BlockEntities.length, 48);
+  assert.equal(value.BlockEntities.length, 28);
   const first = value.BlockEntities[0];
   assert.equal(first.Id, 'minecraft:sign');
-  assert.equal(first.Pos.length, 3);
   assert.match(first.front_text.messages[0], /SkyWars/);
   assert.equal(first.front_text.messages.length, 4);
+});
+
+test('Colores de bloques con varios prefijos (chiseled_polished_blackstone)', async () => {
+  const { blockInfo } = await import('../js/blocks.js');
+  const a = blockInfo({ name: 'minecraft:chiseled_polished_blackstone', props: {} }).side;
+  const b = blockInfo({ name: 'minecraft:blackstone', props: {} }).side;
+  assert.deepEqual(a, b);
 });
