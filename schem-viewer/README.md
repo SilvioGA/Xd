@@ -34,8 +34,9 @@ npm test           # pruebas de los parsers y el mesher (Node 18+)
 - `js/blocks.js`: colores y formas de los bloques.
 - `js/mesher.js`: geometría por chunks de 32³ con caras ocultas eliminadas; selección por DDA.
 - `js/main.js`: escena three.js e interfaz.
-- `js/demo.js` y `js/lobby.js`: ejemplos generados por código (casita y lobby épico).
-- `js/schem-writer.js`: exportador a Sponge `.schem` v2.
+- `js/demo.js`, `js/lobby.js`, `js/japan.js` y `js/skywars.js`: ejemplos generados por código.
+- `js/jp-kit.js`: piezas japonesas compartidas (isla, torii, tōrō, tejados curvos, pagoda, cerezos, bambú).
+- `js/schem-writer.js`: exportador a Sponge `.schem` v2, incluido el texto de los carteles.
 
 ## Lobby épico 50×50
 
@@ -63,3 +64,17 @@ node tools/generar-lobby.mjs japones lobby-japones.schem
 
 Al hacer `//paste` quedas en el centro de la plaza de aparición. Mira al norte
 (`/tp @s ~ ~ ~ 180 0`) y usa `/setworldspawn` para fijar el spawn ahí.
+
+## Lobby SkyWars japonés 50×76
+
+`js/skywars.js`: apareces al sur mirando al norte. Delante tienes el torii, el jardín de
+agua con puente rojo, el podio del ranking (izquierda), el pabellón de kits con tres
+pedestales para NPCs (derecha) y, al fondo, el **muro de carteles**: 48 carteles
+(24 Solo en madera de cerezo, 24 Duos en bambú) bajo el título SKY WARS, con una pagoda
+detrás. Encima flotan islas con cofres como en una partida, y una isla central.
+
+```bash
+node tools/generar-lobby.mjs skywars lobby-skywars.schem
+```
+
+Los carteles ya llevan texto (`[SkyWars]`, mapa, modo); tu plugin puede reescribirlos.

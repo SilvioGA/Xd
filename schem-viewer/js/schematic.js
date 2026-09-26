@@ -39,6 +39,9 @@ export class Schematic {
     this.blocks = new Uint32Array(total);
     this.format = '';
     this.meta = {};
+    // Datos extra de bloques (texto de carteles, etc.): { pos: [x, y, z], id, nbt }.
+    // nbt usa los tags de schem-writer.js y solo se usa al exportar.
+    this.blockEntities = [];
   }
 
   index(x, y, z) {

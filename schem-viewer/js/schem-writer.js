@@ -73,6 +73,21 @@ export function toSpongeV2(schem, { dataVersion = 3465, origin = [0, 0, 0], name
     PaletteMax: tag('int', used.size),
     Palette: compound(palette),
     BlockData: tag('byteArray', data),
-    BlockEntities: tag('list', [], 'compound'),
+    BlockEntities: tag('list', (schem.blockEntities || []).map((be) => compound({
+      Id: tag('string', be.id),
+      Pos: tag('intArray', be.pos),
+      ...(be.nbt || {}),
+    })), 'compound'),
   }), 'Schematic');
+}
+
+// Texto de un cartel (formato 1.20+). lines: hasta 4 componentes de texto JSON.
+export function signNbt(lines, { glowing = false, color = 'black' } = {}) {
+  const msgs = [0, 1, 2, 3].map((i) => tag('string', JSON.stringify(lines[i] ?? '')));
+  const empty = [0, 1, 2, 3].map(() => tag('string', '""'));
+  return {
+    front_text: compound({ messages: tag('list', msgs, 'string'), color: tag('string', color), has_glowing_text: tag('byte', glowing ? 1 : 0) }),
+    back_text: compound({ messages: tag('list', empty, 'string'), color: tag('string', 'black'), has_glowing_text: tag('byte', 0) }),
+    is_waxed: tag('byte', 0),
+  };
 }
