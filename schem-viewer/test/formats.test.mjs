@@ -473,6 +473,14 @@ test('Modo jugador: cae al suelo, sube losas, choca con paredes y trepa escalera
   fl.setFlying(false);
   assert.ok(fl.pos[1] >= 4 && !fl.blockedAt(fl.pos), `sale del bloque (y=${fl.pos[1]})`);
 
+  // Una alfombra flotando tiene colisión: el jugador se queda de pie encima.
+  const s3 = new Schematic(6, 8, 6);
+  s3.set(2, 3, 2, 'yellow_carpet');
+  const cp = new PlayerPhysics(new Mesher(s3));
+  cp.reset([2.5, 5, 2.5, 0]);
+  run(cp, {}, 1);
+  assert.ok(Math.abs(cp.pos[1] - (3 + 1 / 16)) < 1e-6 && cp.onGround, `de pie sobre la alfombra flotante (y=${cp.pos[1]})`);
+
   // Punto de aparición automático: de pie en el borde sur, mirando al norte.
   const sp = findSpawn(s, p);
   assert.equal(sp[1], 1);

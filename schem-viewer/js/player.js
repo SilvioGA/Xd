@@ -12,7 +12,10 @@ const HALF = 0.3;
 const BODY_HEIGHT = 1.8;
 export const EYE = 1.62;
 
-const PASSABLE = /(_door|_fence_gate|_carpet|_pressure_plate|_button|_sign|_banner|torch|^rail|_rail|redstone_wire|^lever$|^fire$|soul_fire|lily_pad|sugar_cane|bamboo$|^chain$|iron_chain|end_rod|lightning_rod|tripwire|sea_pickle|turtle_egg|kelp|seagrass|coral$|coral_fan$|pointed_dripstone|amethyst_cluster|_bud$|^cocoa$|^bell$|cobweb|lantern|flower_pot|^potted_|_head$|_skull$|^light$|structure_void|^barrier$)/;
+// Bloques sin colisión, como en Minecraft (las puertas y portones se atraviesan porque en el
+// visor no se pueden abrir). Todo lo demás choca con su forma real: las alfombras, por ejemplo,
+// tienen 1/16 de bloque de colisión aunque estén flotando.
+const PASSABLE = /(_door|_fence_gate|_pressure_plate|_button|_sign|_banner|torch|^rail|_rail|redstone_wire|^lever$|^fire$|soul_fire|sugar_cane|tripwire|kelp|seagrass|coral$|coral_fan$|cobweb|^light$|structure_void|^barrier$)/;
 const CLIMB = /^(ladder|vine|cave_vines|cave_vines_plant|twisting_vines|twisting_vines_plant|weeping_vines|weeping_vines_plant|scaffolding)$/;
 
 // Tipo de colisión por entrada de paleta.
