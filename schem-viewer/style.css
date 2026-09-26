@@ -332,6 +332,44 @@ kbd {
 
 .mat-actions { display: flex; gap: 6px; flex-wrap: wrap; }
 
+/* ---------- Modo jugador ---------- */
+.player-hud { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+.crosshair { position: absolute; left: 50%; top: 50%; width: 18px; height: 18px; transform: translate(-50%, -50%); }
+.crosshair::before, .crosshair::after { content: ''; position: absolute; background: #fff; mix-blend-mode: difference; }
+.crosshair::before { left: 8px; top: 0; width: 2px; height: 18px; }
+.crosshair::after { top: 8px; left: 0; height: 2px; width: 18px; }
+.player-info {
+  position: absolute; left: 12px; top: 12px; display: flex; flex-direction: column; gap: 2px;
+  padding: 8px 12px; border-radius: 6px; background: rgba(15, 20, 25, 0.62); color: #f2f2f2;
+  font-family: var(--font-mono); font-size: 12px; font-variant-numeric: tabular-nums;
+}
+.player-info strong { font-family: var(--font-pixel); font-weight: 400; font-size: 12px; letter-spacing: 0.06em; color: #8fe0d2; }
+.player-info #player-target:empty { display: none; }
+.player-help {
+  position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); margin: 0; max-width: calc(100% - 24px);
+  padding: 6px 10px; border-radius: 6px; background: rgba(15, 20, 25, 0.62); color: #e8e8e8; font-size: 12px; text-align: center;
+}
+.player-help kbd { border-color: rgba(255, 255, 255, 0.35); color: #fff; margin: 0 1px; }
+.player-lock {
+  position: absolute; left: 50%; top: calc(50% + 28px); transform: translateX(-50%); margin: 0;
+  padding: 6px 10px; border-radius: 6px; background: rgba(15, 20, 25, 0.7); color: #fff; font-size: 13px; white-space: nowrap;
+}
+.player-exit { position: absolute; right: 12px; top: 12px; pointer-events: auto; background: var(--panel); }
+.touch-pad {
+  display: none; position: absolute; left: 12px; bottom: 56px; pointer-events: auto;
+  grid-template-columns: repeat(3, 48px); grid-template-rows: repeat(2, 48px); gap: 6px;
+}
+.touch-pad .btn { justify-content: center; padding: 0; opacity: 0.85; touch-action: none; user-select: none; }
+.touch-pad [data-key="forward"] { grid-column: 2; grid-row: 1; }
+.touch-pad [data-key="left"] { grid-column: 1; grid-row: 2; }
+.touch-pad [data-key="back"] { grid-column: 2; grid-row: 2; }
+.touch-pad [data-key="right"] { grid-column: 3; grid-row: 2; }
+.touch-pad [data-key="jump"] { grid-column: 3; grid-row: 1; font-size: 11px; }
+.touch-pad [data-key="fly"] { grid-column: 1; grid-row: 1; font-size: 11px; }
+@media (pointer: coarse) { .touch-pad { display: grid; } .player-help { display: none; } }
+body.playing .view-tools, body.playing .hint { display: none; }
+body.playing .stage canvas { cursor: crosshair; }
+
 @media (max-width: 760px) {
   .app { height: auto; min-height: 100%; }
   .main { grid-template-columns: 1fr; }

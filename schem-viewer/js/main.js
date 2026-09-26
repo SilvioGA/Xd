@@ -11,6 +11,7 @@ import { buildRabbit } from './rabbit.js';
 import { buildTree } from './tree.js';
 import { buildIsland } from './island.js';
 import { buildMansion } from './mansion.js';
+import { PlayerPhysics, findSpawn } from './player.js';
 
 const $ = (id) => document.getElementById(id);
 const stage = $('stage');
@@ -347,6 +348,7 @@ $('layer-up').addEventListener('click', () => stepLayer(1));
 
 // ---------- Carga ----------
 function load(s, fileName) {
+  if (player.active) exitPlayer();
   for (const c of chunks.values()) disposeChunk(c);
   chunks = new Map();
   schem = s;
@@ -439,7 +441,7 @@ $('btn-grid').addEventListener('click', (e) => {
 
 window.addEventListener('keydown', (e) => {
   if (e.target instanceof HTMLInputElement && e.target.type !== 'range' && e.target.type !== 'checkbox') return;
-  if (!schem) return;
+  if (!schem || player.active) return;
   if (e.key === '[' || e.key === 'PageDown') { stepLayer(-1); e.preventDefault(); }
   if (e.key === ']' || e.key === 'PageUp') { stepLayer(1); e.preventDefault(); }
   if (e.key === 'r' || e.key === 'R') fitCamera();
@@ -456,7 +458,7 @@ renderer.domElement.addEventListener('pointermove', (e) => {
   pointer.cy = e.clientY - r.top;
   pointer.x = (pointer.cx / r.width) * 2 - 1;
   pointer.y = -(pointer.cy / r.height) * 2 + 1;
-  pointer.dirty = e.pointerType === 'mouse';
+  pointer.dirty = e.pointerType === 'mouse' && !player.active;
 });
 renderer.domElement.addEventListener('pointerdown', () => { pointer.down = true; hideTooltip(); });
 window.addEventListener('pointerup', () => { pointer.down = false; });
@@ -501,11 +503,166 @@ function updatePick() {
 
 controls.addEventListener('change', () => { pointer.dirty = pointer.dirty || !tooltip.hidden; });
 
-function frame() {
+// ---------- Modo jugador ----------
+const SKY = new THREE.Color('#9ccbf2');
+const player = { active: false, physics: null, input: {}, locked: false, drag: null, saved: null, hudTime: 0 };
+const KEYS = {
+  KeyW: 'forward', ArrowUp: 'forward', KeyS: 'back', ArrowDown: 'back', KeyA: 'left', ArrowLeft: 'left',
+  KeyD: 'right', ArrowRight: 'right', Space: 'jump', ShiftLeft: 'sprint', ShiftRight: 'sprint',
+};
+
+function requestLock() {
+  try {
+    const r = renderer.domElement.requestPointerLock?.();
+    if (r && r.catch) r.catch(() => {});
+  } catch {
+    // Sin bloqueo del ratón: se mira arrastrando.
+  }
+}
+
+function enterPlayer() {
+  if (!schem || player.active) return;
+  player.saved = {
+    pos: camera.position.clone(), target: controls.target.clone(), fov: camera.fov, near: camera.near, far: camera.far,
+    layer: $('layer').value, single: $('single-layer').checked, grid: helpers.visible,
+  };
+  $('single-layer').checked = false;
+  $('layer').value = $('layer').max;
+  applyLayer();
+  player.physics = new PlayerPhysics(mesher);
+  player.physics.reset(findSpawn(schem, player.physics));
+  player.input = {};
+  controls.enabled = false;
+  helpers.visible = false;
+  hideTooltip();
+  scene.background = SKY;
+  scene.fog = new THREE.Fog(SKY, 50, 220);
+  camera.fov = 75;
+  camera.near = 0.05;
+  camera.far = 800;
+  camera.rotation.order = 'YXZ';
+  camera.updateProjectionMatrix();
+  player.active = true;
+  document.body.classList.add('playing');
+  $('player-hud').hidden = false;
+  $('btn-player').setAttribute('aria-pressed', 'true');
+  requestLock();
+}
+
+function exitPlayer() {
+  if (!player.active) return;
+  player.active = false;
+  if (document.pointerLockElement) document.exitPointerLock?.();
+  const sv = player.saved;
+  scene.background = null;
+  scene.fog = null;
+  camera.fov = sv.fov;
+  camera.near = sv.near;
+  camera.far = sv.far;
+  camera.rotation.order = 'XYZ';
+  camera.position.copy(sv.pos);
+  camera.updateProjectionMatrix();
+  controls.target.copy(sv.target);
+  controls.enabled = true;
   controls.update();
-  if (pointer.dirty) {
-    pointer.dirty = false;
-    updatePick();
+  helpers.visible = sv.grid;
+  $('layer').value = sv.layer;
+  $('single-layer').checked = sv.single;
+  applyLayer();
+  document.body.classList.remove('playing');
+  $('player-hud').hidden = true;
+  highlight.visible = false;
+  $('btn-player').setAttribute('aria-pressed', 'false');
+}
+
+function look(dx, dy) {
+  const p = player.physics;
+  p.yaw -= dx * 0.0024;
+  p.pitch = Math.max(-1.55, Math.min(1.55, p.pitch - dy * 0.0024));
+}
+
+$('btn-player').addEventListener('click', () => (player.active ? exitPlayer() : enterPlayer()));
+$('btn-exit-player').addEventListener('click', exitPlayer);
+document.addEventListener('pointerlockchange', () => {
+  player.locked = document.pointerLockElement === renderer.domElement;
+  $('player-lock-hint').hidden = player.locked || !player.active;
+});
+document.addEventListener('mousemove', (e) => {
+  if (player.active && player.locked) look(e.movementX || 0, e.movementY || 0);
+});
+// Sin bloqueo del ratón (o en pantallas táctiles) se mira arrastrando sobre la vista.
+renderer.domElement.addEventListener('pointerdown', (e) => {
+  if (!player.active) return;
+  if (e.pointerType === 'mouse' && !player.locked) requestLock();
+  if (!player.locked) player.drag = { id: e.pointerId, x: e.clientX, y: e.clientY };
+});
+renderer.domElement.addEventListener('pointermove', (e) => {
+  if (!player.active || !player.drag || player.drag.id !== e.pointerId) return;
+  look((e.clientX - player.drag.x) * 1.6, (e.clientY - player.drag.y) * 1.6);
+  player.drag.x = e.clientX;
+  player.drag.y = e.clientY;
+});
+window.addEventListener('pointerup', () => { player.drag = null; });
+window.addEventListener('keydown', (e) => {
+  if (!player.active) return;
+  if (KEYS[e.code]) { player.input[KEYS[e.code]] = true; e.preventDefault(); }
+  if (e.code === 'KeyF' && !e.repeat) {
+    player.physics.flying = !player.physics.flying;
+    player.physics.vel[1] = 0;
+  }
+  if (e.code === 'Escape' && !player.locked) exitPlayer();
+});
+window.addEventListener('keyup', (e) => {
+  if (player.active && KEYS[e.code]) player.input[KEYS[e.code]] = false;
+});
+window.addEventListener('blur', () => { player.input = {}; });
+// Botones táctiles.
+for (const b of document.querySelectorAll('#touch-pad [data-key]')) {
+  const key = b.dataset.key;
+  const on = (e) => {
+    e.preventDefault();
+    if (key === 'fly') { player.physics.flying = !player.physics.flying; player.physics.vel[1] = 0; return; }
+    player.input[key] = true;
+  };
+  const off = () => { if (key !== 'fly') player.input[key] = false; };
+  b.addEventListener('pointerdown', on);
+  b.addEventListener('pointerup', off);
+  b.addEventListener('pointerleave', off);
+  b.addEventListener('pointercancel', off);
+}
+
+function updatePlayer(dt) {
+  const p = player.physics;
+  p.step(dt, player.input);
+  const [ex, ey, ez] = p.eye();
+  camera.position.set(ex, ey, ez);
+  camera.rotation.set(p.pitch, p.yaw, 0, 'YXZ');
+  player.hudTime += dt;
+  if (player.hudTime < 0.1) return;
+  player.hudTime = 0;
+  $('player-mode').textContent = p.flying ? 'Volando' : p.inFluid ? 'Nadando' : 'Caminando';
+  $('player-pos').textContent = `x ${Math.floor(p.pos[0])}  y ${Math.floor(p.pos[1])}  z ${Math.floor(p.pos[2])}`;
+  // Bloque al que apunta la mira (hasta 8 bloques).
+  const dir = new THREE.Vector3(0, 0, -1).applyEuler(camera.rotation);
+  const hit = mesher.pick([ex, ey, ez], [dir.x, dir.y, dir.z]);
+  const near = hit && Math.hypot(hit.x + 0.5 - ex, hit.y + 0.5 - ey, hit.z + 0.5 - ez) < 8;
+  highlight.visible = !!near;
+  if (near) highlight.position.set(hit.x + 0.5, hit.y + 0.5, hit.z + 0.5);
+  $('player-target').textContent = near ? prettyName(schem.palette[hit.id].name) : '';
+}
+
+let lastTime = performance.now();
+function frame() {
+  const now = performance.now();
+  const dt = (now - lastTime) / 1000;
+  lastTime = now;
+  if (player.active) updatePlayer(dt);
+  else {
+    controls.update();
+    if (pointer.dirty) {
+      pointer.dirty = false;
+      updatePick();
+    }
   }
   renderer.render(scene, camera);
   requestAnimationFrame(frame);

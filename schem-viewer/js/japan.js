@@ -236,6 +236,8 @@ export function buildJapaneseLobby() {
     else if (r < 0.3) set(x, S + 1, z, 'moss_carpet');
   }
 
+  const [spx, spy, spz] = JAPAN_SPAWN;
+  s.meta.spawn = [spx + 0.5, spy, spz + 0.5, 0]; // mirando al norte
   finalizeConnections(s);
   return s;
 }

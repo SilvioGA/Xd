@@ -408,7 +408,7 @@ test('Mansión survival: todo funciona como en el juego', async () => {
       assert.equal(nm(x, y, z + dz), `${color}_bed`, `cama incompleta en ${x},${y},${z}`);
     }
   }
-  for (const wood of ['spruce', 'dark_oak']) for (const [x, y, z] of all(`${wood}_door`)) {
+  for (const wood of ['spruce', 'dark_oak', 'birch']) for (const [x, y, z] of all(`${wood}_door`)) {
     const other = props(x, y, z).half === 'lower' ? y + 1 : y - 1;
     assert.equal(nm(x, other, z), `${wood}_door`, `puerta incompleta en ${x},${y},${z}`);
   }
@@ -428,4 +428,43 @@ test('Mansión survival: todo funciona como en el juego', async () => {
   // Fuente de agua infinita: al menos un cuadrado de 2×2 de agua.
   const water = new Set(all('water').filter(([, y]) => y === G).map(([x, , z]) => `${x},${z}`));
   assert.ok([...water].some((k) => { const [x, z] = k.split(',').map(Number); return water.has(`${x + 1},${z}`) && water.has(`${x},${z + 1}`) && water.has(`${x + 1},${z + 1}`); }));
+});
+
+test('Modo jugador: cae al suelo, sube losas, choca con paredes y trepa escaleras de mano', async () => {
+  const { Schematic } = await import('../js/schematic.js');
+  const { PlayerPhysics, findSpawn } = await import('../js/player.js');
+  const make = (ladder) => {
+    const s = new Schematic(12, 8, 12);
+    for (let z = 0; z < 12; z++) for (let x = 0; x < 12; x++) s.set(x, 0, z, 'stone');
+    for (let x = 0; x < 12; x++) for (let y = 1; y <= 3; y++) s.set(x, y, 2, 'stone'); // pared al norte
+    for (let x = 0; x < 12; x++) s.set(x, 1, 6, 'stone_slab', { type: 'bottom' }); // fila de losas
+    if (ladder) for (let y = 1; y <= 3; y++) s.set(5, y, 3, 'ladder', { facing: 'south' });
+    return s;
+  };
+  const run = (p, input, seconds) => {
+    let maxY = -Infinity;
+    for (let t = 0; t < seconds; t += 1 / 60) { p.step(1 / 60, input); maxY = Math.max(maxY, p.pos[1]); }
+    return maxY;
+  };
+
+  const s = make(false);
+  const p = new PlayerPhysics(new Mesher(s));
+  p.reset([5.5, 5, 8.5, 0]);
+  run(p, {}, 1.5);
+  assert.ok(Math.abs(p.pos[1] - 1) < 1e-6 && p.onGround, `de pie sobre el suelo (y=${p.pos[1]})`);
+  const maxY = run(p, { forward: true }, 3);
+  assert.ok(Math.abs(maxY - 1.5) < 1e-6, `sube a la losa sin saltar (máx y=${maxY})`);
+  assert.ok(Math.abs(p.pos[2] - 3.3) < 1e-3, `la pared lo detiene (z=${p.pos[2]})`);
+  assert.ok(Math.abs(p.pos[1] - 1) < 1e-6, 'vuelve a bajar al suelo');
+
+  const s2 = make(true);
+  const q = new PlayerPhysics(new Mesher(s2));
+  q.reset([5.5, 1, 5.5, 0]);
+  const climbed = run(q, { forward: true }, 2);
+  assert.ok(climbed >= 3.9, `trepa por la escalera hasta arriba de la pared (máx y=${climbed})`);
+
+  // Punto de aparición automático: de pie en el borde sur, mirando al norte.
+  const sp = findSpawn(s, p);
+  assert.equal(sp[1], 1);
+  assert.equal(sp[2], 11.5);
 });

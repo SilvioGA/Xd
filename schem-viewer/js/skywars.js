@@ -325,6 +325,8 @@ export function buildSkyWarsLobby() {
     else if (r < 0.27) set(x, top + 1, z, pick(['sweet_berry_bush', 'dead_bush']));
   }
 
+  const [spx, spy, spz] = SKYWARS_SPAWN;
+  s.meta.spawn = [spx + 0.5, spy, spz + 0.5, 0]; // mirando al norte
   finalizeConnections(s);
   return s;
 }

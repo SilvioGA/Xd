@@ -56,6 +56,26 @@
       <div class="view-tools">
         <button class="btn small" id="btn-grid" type="button" aria-pressed="true">Rejilla</button>
         <button class="btn small" id="btn-reset" type="button">Centrar vista</button>
+        <button class="btn small primary" id="btn-player" type="button" aria-pressed="false">Modo jugador</button>
+      </div>
+      <div class="player-hud" id="player-hud" hidden>
+        <div class="crosshair" aria-hidden="true"></div>
+        <div class="player-info">
+          <strong id="player-mode">Caminando</strong>
+          <span id="player-pos"></span>
+          <span id="player-target"></span>
+        </div>
+        <p class="player-lock" id="player-lock-hint" hidden>Haz clic en la vista para mirar con el ratón</p>
+        <p class="player-help"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> moverse · ratón mirar · <kbd>Espacio</kbd> saltar · <kbd>Mayús</kbd> correr · <kbd>F</kbd> volar · <kbd>Esc</kbd> soltar el ratón</p>
+        <button class="btn small player-exit" id="btn-exit-player" type="button">Salir del modo jugador</button>
+        <div class="touch-pad" id="touch-pad">
+          <button class="btn" type="button" data-key="forward" aria-label="Avanzar">▲</button>
+          <button class="btn" type="button" data-key="left" aria-label="Izquierda">◀</button>
+          <button class="btn" type="button" data-key="back" aria-label="Retroceder">▼</button>
+          <button class="btn" type="button" data-key="right" aria-label="Derecha">▶</button>
+          <button class="btn" type="button" data-key="jump" aria-label="Saltar">Saltar</button>
+          <button class="btn" type="button" data-key="fly" aria-label="Volar">Volar</button>
+        </div>
       </div>
     </section>
 
